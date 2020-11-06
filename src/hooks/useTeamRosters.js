@@ -10,6 +10,7 @@ const useTeamRosters = (eventId, gameOver = false) => {
   const [uprmRoster, setUprmRoster] = useState({});
   const [opponentRoster, setOpponentRoster] = useState({});
   useEffect(() => {
+    const database = firebase.database();
     const uprmRosterRef = database.ref(`v1/${eventId}/uprm-roster`);
     const opponentRosterRef = database.ref(`v1/${eventId}/opponent-roster`);
     // If the game has ended only fetch the rosters once since there will be no changes
