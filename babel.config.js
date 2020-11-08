@@ -12,6 +12,7 @@ module.exports = function (api) {
             _navigation: './src/navigation',
             _styles: './src/styles',
             _firebase: './src/firebase',
+            _hooks: './src/hooks',
           },
         },
       ],
