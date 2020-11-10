@@ -1,20 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { useTeamRosters, useGameStatus, useGameActions } from '_hooks';
-import { firebase } from '_firebase';
 
 // Action: single action render component
-const Action = ({ action }) => (
+const Action = ({ action, name, number }) => (
   <View style={styles.action}>
     <Text>{action}</Text>
+    <Text>
+      #{number}. {name}
+    </Text>
   </View>
 );
 
 // Game actions: list of actions for an event
-const GameActions = ({ gameActions }) => {
-  const renderItem = ({ item }) => <Action action={item.action_type} />;
+const GameActions = ({ sport, gameActions, teamRosters }) => {
+  // Function to render each action
+  const renderItem = ({ item }) => {
+    const actionType = item.action_type;
+    // Get dictionary that has action type descriptions
+    const sportDic = actionDescription[sport];
+    // Check if the action type is define in sport dictionary
+    const actionDesc = sportDic.hasOwnProperty(actionType)
+      ? sportDic[actionType]
+      : 'Acción desconocida';
+    // Get the roster corresponding to the team who performed the action
+    const roster = teamRosters[item.team];
+    let athleteName = '';
+    let athleteNumber = '';
+    // Check if athlete is in the roster
+    if (roster.hasOwnProperty(`athlete-${item.athlete_id}`)) {
+      const athlete = roster[`athlete-${item.athlete_id}`];
+      athleteName =
+        item.team == 'uprm'
+          ? [athlete.first_name, athlete.middle_name, athlete.last_names]
+              .filter(Boolean)
+              .join(' ')
+          : athlete.name;
+      athleteNumber = athlete.number;
+    } else {
+      athleteName = 'Atleta desconocido';
+      athleteNumber = '?';
+    }
+    return (
+      <Action action={actionDesc} name={athleteName} number={athleteNumber} />
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <View>
       <FlatList
         data={gameActions}
         keyExtractor={item => item.id}
@@ -43,4 +75,18 @@ const styles = StyleSheet.create({
   },
 });
 
+const actionDescription = {
+  Voleibol: {
+    KillPoint: 'Punto de Ataque',
+    AttackError: 'Error de Ataque',
+    Assist: 'Asistencia',
+    Ace: 'Servicio Directo',
+    ServiceError: 'Error de Servicio',
+    Dig: 'Recepción',
+    Block: 'Bloqueo',
+    BlockPoint: 'Punto de Bloqueo',
+    BlockingError: 'Error de Bloqueo',
+    ReceptionError: 'Error de Recepción',
+  },
+};
 export default GameActions;
