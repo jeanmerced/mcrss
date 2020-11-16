@@ -4,8 +4,8 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 // Action: single action render component
 const Action = ({ action, name, number }) => (
   <View style={styles.action}>
-    <Text>{action}</Text>
-    <Text>
+    <Text style={styles.actionText}>{action}</Text>
+    <Text style={styles.actionText}>
       #{number}. {name}
     </Text>
   </View>
@@ -17,7 +17,7 @@ const GameActions = ({ sport, gameActions, teamRosters }) => {
   const renderItem = ({ item }) => {
     const actionType = item.action_type;
     // Get dictionary that has action type descriptions
-    const sportDic = actionDescription[sport];
+    const sportDic = actionsDescriptions[sport];
     // Check if the action type is define in sport dictionary
     const actionDesc = sportDic.hasOwnProperty(actionType)
       ? sportDic[actionType]
@@ -46,14 +46,13 @@ const GameActions = ({ sport, gameActions, teamRosters }) => {
   };
 
   return (
-    <View>
-      <FlatList
-        data={gameActions}
-        keyExtractor={item => item.id}
-        renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
-      />
-    </View>
+    <FlatList
+      data={gameActions}
+      keyExtractor={item => item.id.toString()}
+      renderItem={renderItem}
+      ItemSeparatorComponent={() => <View style={styles.divider} />}
+      contentContainerStyle={{ flexGrow: 1 }}
+    />
   );
 };
 
@@ -65,17 +64,22 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderColor: '#F6F6F6',
-    borderWidth: 0.5,
+    borderWidth: 2,
   },
   action: {
-    height: 50,
-    backgroundColor: 'green',
+    height: 70,
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  actionText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
 });
 
-const actionDescription = {
+const actionsDescriptions = {
   Voleibol: {
     KillPoint: 'Punto de Ataque',
     AttackError: 'Error de Ataque',

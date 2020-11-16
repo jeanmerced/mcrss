@@ -1,7 +1,10 @@
-//@refresh reset
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import AppNavigator from '_navigation/AppNavigator';
-import GameActions from '_components/GameActions';
+import EventScreen from '_screens/EventScreen';
+import CalendarStrip from 'react-native-calendar-strip';
 
-const App = () => <GameActions />;
+const App = () => <AppNavigator />;
+// const App = () => <EventScreen />;
+
 export default App;
