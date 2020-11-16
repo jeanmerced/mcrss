@@ -50,59 +50,88 @@ const AthleteStats = ({ sport, gameActions, teamRosters }) => {
       }
     });
     setStats({ ...allStats });
-  }, [gameActions]);
+  }, [gameActions, teamRosters]);
 
-  const renderStats = ({ item }) => {
-    const [key, value] = item;
-    return (
-      <View style={styles.row}>
-        {Object.keys(sportsStats[sport]).map(k => (
-          <Text style={styles.col}>{value[k]}</Text>
-        ))}
-      </View>
-    );
-  };
+  const statsHeader = (
+    <View style={styles.tableHeader}>
+      {statsAbbreviation[sport].map(abbr => (
+        <Text key={`h-${abbr}`} style={styles.headerText}>
+          {abbr}
+        </Text>
+      ))}
+    </View>
+  );
 
-  const renderUprmAthlete = ({ item }) => {
-    const [key, value] = item;
+  const playerHeader = (
+    <View style={styles.tableHeader}>
+      <Text style={styles.playerHeaderText}>Atleta</Text>
+    </View>
+  );
+
+  const renderStats = (key, value) => (
+    /* 
+    To ensure the order in which stats columns are 
+    placed, we we use the sport dictionary. The dictionary
+    keys are use on the value object to get the stats value.
+    */
+    <View key={key} style={styles.row}>
+      {Object.keys(sportsStats[sport]).map(k => (
+        <Text key={k} style={styles.col}>
+          {value[k]}
+        </Text>
+      ))}
+    </View>
+  );
+
+  const renderUprmAthlete = (key, value) => {
     const name = [value.first_name, value.middle_name, value.last_names]
       .filter(Boolean)
       .join(' ');
     return (
-      <View style={styles.playerCell}>
+      <View key={`ath-${key}`} style={styles.playerCell}>
         <Text style={styles.playerText}>{name}</Text>
       </View>
     );
   };
+
+  const renderTable = team => (
+    /*
+    renderTable will render individual stats for athletes
+    for a specific team. First we interate through the roster
+    with the map funcion where key is athlete id and in value
+    we find the stats. For each intereation we call renderStats
+    that takes care of rendering a row in the table
+    */
+    <View>
+      {Object.entries(stats[team]).map(([key, value]) =>
+        renderStats(key, value)
+      )}
+    </View>
+  );
+
+  const renderAthletes = team => (
+    <View>
+      {Object.entries(stats[team]).map(([key, value]) =>
+        renderUprmAthlete(key, value)
+      )}
+    </View>
+  );
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <View style={styles.tableHeader}>
-          <Text style={styles.playerHeaderText}>Atleta</Text>
+    <ScrollView style={{ backgroundColor: '#fff' }}>
+      <View style={styles.container}>
+        <View style={{ flexDirection: 'column' }}>
+          {playerHeader}
+          {renderAthletes('uprm')}
         </View>
-        <FlatList
-          data={Object.entries(stats.uprm)}
-          keyExtractor={([key, value]) => `uprm-${key}`}
-          renderItem={renderUprmAthlete}
-          ItemSeparatorComponent={() => <View style={styles.divider} />}
-        />
-      </View>
-      <ScrollView horizontal>
-        <View>
-          <View style={styles.tableHeader}>
-            {statsAbbreviation[sport].map(abbr => (
-              <Text style={styles.headerText}>{abbr}</Text>
-            ))}
+        <ScrollView horizontal>
+          <View style={{ flexDirection: 'column' }}>
+            {statsHeader}
+            {renderTable('uprm')}
           </View>
-          <FlatList
-            data={Object.entries(stats.uprm)}
-            keyExtractor={([key, value]) => key}
-            renderItem={renderStats}
-            ItemSeparatorComponent={() => <View style={styles.divider} />}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -114,9 +143,10 @@ const styles = StyleSheet.create({
   playerHeaderText: {
     color: '#fff',
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     fontSize: 16,
     width: 120,
+    marginLeft: 10,
   },
   playerCell: {
     flex: 1,
