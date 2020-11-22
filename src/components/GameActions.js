@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 
 // Action: single action render component
 const Action = ({ action, name, number }) => (
   <View style={styles.action}>
-    <Text style={styles.actionText}>{action}</Text>
+    <Text style={[styles.actionText, { fontWeight: 'bold' }]}>{action}</Text>
     <Text style={styles.actionText}>
       #{number}. {name}
     </Text>
@@ -41,7 +41,12 @@ const GameActions = ({ sport, gameActions, teamRosters }) => {
       athleteNumber = '?';
     }
     return (
-      <Action action={actionDesc} name={athleteName} number={athleteNumber} />
+      <Action
+        key={item.id}
+        action={actionDesc}
+        name={athleteName}
+        number={athleteNumber}
+      />
     );
   };
 
@@ -52,6 +57,9 @@ const GameActions = ({ sport, gameActions, teamRosters }) => {
       renderItem={renderItem}
       ItemSeparatorComponent={() => <View style={styles.divider} />}
       contentContainerStyle={{ flexGrow: 1 }}
+      ListEmptyComponent={() => (
+        <Text>No hay acciones de juego disponibles</Text>
+      )}
     />
   );
 };
@@ -64,17 +72,16 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderColor: '#F6F6F6',
-    borderWidth: 2,
+    borderWidth: 0.5,
   },
   action: {
-    height: 70,
+    height: 45,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'center',
+    paddingLeft: 20,
   },
   actionText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 12,
     textAlign: 'left',
   },
 });

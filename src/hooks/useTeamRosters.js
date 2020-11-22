@@ -25,61 +25,20 @@ const useTeamRosters = (eventId, gameOver) => {
       // If the game is not over listen to roster changes
 
       //UPRM Listener
-      uprmRosterRef.on('child_added', rosterSnapshot => {
-        setUprmRoster(prevRoster => {
-          // create roster entry
-          prevRoster[rosterSnapshot.key] = rosterSnapshot.val();
-          // merge to previous state
-          return { ...prevRoster };
-        });
-      });
-
-      // Same as on added because using same key updates value.
-      uprmRosterRef.on('child_changed', rosterSnapshot => {
-        setUprmRoster(prevRoster => {
-          // create roster entry
-          prevRoster[rosterSnapshot.key] = rosterSnapshot.val();
-          // merge to previous state
-          return { ...prevRoster };
-        });
-      });
-
-      uprmRosterRef.on('child_removed', rosterSnapshot => {
-        setUprmRoster(prevRoster => {
-          // delete entry from object
-          delete prevRoster[rosterSnapshot.key];
-          return { ...prevRoster };
-        });
-      });
-
-      //Opponent Listeners
-      opponentRosterRef.on('child_added', rosterSnapshot => {
-        setOpponentRoster(prevRoster => {
-          prevRoster[rosterSnapshot.key] = rosterSnapshot.val();
-          return { ...prevRoster };
-        });
-      });
-
-      opponentRosterRef.on('child_changed', rosterSnapshot => {
-        setOpponentRoster(prevRoster => {
-          prevRoster[rosterSnapshot.key] = rosterSnapshot.val();
-          return { ...prevRoster };
-        });
-      });
-
-      opponentRosterRef.on('child_removed', rosterSnapshot => {
-        setOpponentRoster(prevRoster => {
-          delete prevRoster[rosterSnapshot.key];
-          return { ...prevRoster };
-        });
-      });
+      uprmRosterRef.on('value', rosterSnapshot =>
+        setUprmRoster(rosterSnapshot.val())
+      );
+      // Opponent Listener
+      opponentRosterRef.on('value', rosterSnapshot =>
+        setOpponentRoster(rosterSnapshot.val())
+      );
     }
 
     return () => {
       uprmRosterRef.off();
       opponentRosterRef.off();
     };
-  }, [eventId, gameOver]);
+  }, [gameOver]);
   return { uprm: uprmRoster, opponent: opponentRoster };
 };
 

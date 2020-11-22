@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useTeamRosters, useGameActions } from '_hooks';
-import { SafeAreaView, Text, FlatList, StyleSheet, View } from 'react-native';
+import React, { useState, useEffect, memo } from 'react';
+import { Text, FlatList, StyleSheet, View } from 'react-native';
 
-const TeamStats = ({ sport, gameActions }) => {
-  const [stats, setStats] = useState({ uprm: {}, opponent: {} });
+const TableRow = ({ statDescription, uprmValue, opponentValue }) => (
+  <View style={styles.row}>
+    <Text style={styles.col}>{uprmValue}</Text>
+    <Text style={[styles.col, { width: '60%' }]}>{statDescription}</Text>
+    <Text style={styles.col}>{opponentValue}</Text>
+  </View>
+);
 
+const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
+  const [stats, setStats] = useState(() => ({ uprm: {}, opponent: {} }));
   useEffect(() => {
     const teamStats = {
       uprm: { ...sportsStats[sport] },
@@ -21,25 +27,41 @@ const TeamStats = ({ sport, gameActions }) => {
     setStats({ ...teamStats });
   }, [gameActions]);
 
+  const StatsHeader = () => (
+    <View style={styles.row}>
+      <Text style={[styles.col, { fontWeight: 'bold' }]}>{uprmName}</Text>
+      <Text style={[styles.col, { width: '60%', fontWeight: 'bold' }]}>
+        Estadísticas
+      </Text>
+      <Text style={[styles.col, { fontWeight: 'bold' }]}>{opponentName}</Text>
+    </View>
+  );
+
   const renderStats = ({ item }) => {
-    const [key, value] = item;
-    const statDesc = statsDescriptions[sport][key];
+    // item is a key from the sport dictionary
+    const statDescription = statsDescriptions[sport][item];
+    const uprmValue = stats.uprm[item];
+    const opponentValue = stats.opponent[item];
     return (
-      <View style={styles.row}>
-        <Text style={styles.rowText}>
-          {statDesc} {value}
-        </Text>
-      </View>
+      <TableRow
+        statDescription={statDescription}
+        uprmValue={uprmValue}
+        opponentValue={opponentValue}
+      />
     );
   };
 
   return (
     <FlatList
-      data={Object.entries(stats.uprm)}
-      keyExtractor={([key, value]) => `uprm-${key}`}
+      data={Object.keys(sportsStats[sport])}
+      ListHeaderComponent={StatsHeader}
+      keyExtractor={item => item.toString()}
       renderItem={renderStats}
+      extraData={gameActions}
       ItemSeparatorComponent={() => <View style={styles.divider} />}
+      ListEmptyComponent={() => <Text>No hay estadisticos de equipo</Text>}
       contentContainerStyle={{ flexGrow: 1 }}
+      stickyHeaderIndices={[0]}
     />
   );
 };
@@ -50,18 +72,20 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderColor: '#F6F6F6',
-    borderWidth: 2,
+    borderWidth: 0.5,
   },
   row: {
-    height: 70,
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    paddingLeft: 20,
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
-  rowText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'left',
+  col: {
+    textAlign: 'center',
+    fontSize: 12,
+    width: '20%',
   },
 });
 

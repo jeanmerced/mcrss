@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const YoutubePlayer = ({ videoId }) => (
@@ -7,3 +7,5 @@ const YoutubePlayer = ({ videoId }) => (
     <WebView source={{ uri: `https://www.youtube.com/embed/${videoId}` }} />
   </View>
 );
+
+export default YoutubePlayer;

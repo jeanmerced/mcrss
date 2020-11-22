@@ -18,7 +18,6 @@ const AthleteStats = ({ sport, gameActions, teamRosters }) => {
     objects as values. The main key is athlete id and the value
     is athlete info.
     */
-    // Get Rosters
     const uprmAthletes = { ...teamRosters.uprm };
     const oppAthletes = { ...teamRosters.opponent };
     // Add Stats to every athlete
@@ -30,13 +29,13 @@ const AthleteStats = ({ sport, gameActions, teamRosters }) => {
       oppAthletes[key] = { ...value, ...sportsStats[sport] };
     });
     // Put in a single object for easier look up
+    // All stats has 3 levels Rosters - Athletes - Stats
     const allStats = {
       uprm: { ...uprmAthletes },
       opponent: { ...oppAthletes },
     };
     gameActions.forEach(action => {
       if (sportsStats[sport].hasOwnProperty(action.action_type)) {
-        // Roster - Athlete - Stats
         const team = action.team;
         const athleteId = `athlete-${action.athlete_id}`;
         const actionType = action.action_type;
@@ -71,7 +70,7 @@ const AthleteStats = ({ sport, gameActions, teamRosters }) => {
   const renderStats = (key, value) => (
     /* 
     To ensure the order in which stats columns are 
-    placed, we we use the sport dictionary. The dictionary
+    placed, we use the sport dictionary. The dictionary
     keys are use on the value object to get the stats value.
     */
     <View key={key} style={styles.row}>
