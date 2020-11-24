@@ -1,58 +1,82 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 
+const getActionDescription = (sport, actionType) => {
+  const sportDictionary = actionsDescriptions[sport];
+  if (sportDictionary.hasOwnProperty(actionType))
+    return sportDictionary[actionType];
+  else return 'Acción desconocida';
+};
+
+//
+const getAthleteInfo = (rosters, team, athleteId) => {
+  const teamRoster = rosters[team];
+  let athleteName = '';
+  let athleteNumber = '';
+  if (teamRoster?.hasOwnProperty(`athlete-${athleteId}`)) {
+    const athlete = teamRoster[`athlete-${athleteId}`];
+    athleteName =
+      team == 'uprm'
+        ? [athlete.first_name, athlete.middle_name, athlete.last_names]
+            .filter(Boolean)
+            .join(' ')
+        : athlete.name;
+    athleteNumber = athlete.number;
+  } else {
+    athleteName = 'Atleta desconocido';
+    athleteNumber = '?';
+  }
+  return { athleteName, athleteNumber };
+};
+
 // Action: single action render component
-const Action = ({ action, name, number }) => (
+const Action = ({ action, name, number, teamName }) => (
   <View style={styles.action}>
-    <Text style={[styles.actionText, { fontWeight: 'bold' }]}>{action}</Text>
     <Text style={styles.actionText}>
-      #{number}. {name}
+      [{teamName}]<Text style={{ fontWeight: 'bold' }}> {action}</Text>
+    </Text>
+    <Text style={styles.actionText}>
+      #{number} {name}
     </Text>
   </View>
 );
 
 // Game actions: list of actions for an event
-const GameActions = ({ sport, gameActions, teamRosters }) => {
+const GameActions = ({
+  sport,
+  gameActions,
+  teamRosters,
+  uprmName,
+  opponentName,
+}) => {
   // Function to render each action
+  const actionData = useMemo(() => {
+    return gameActions.filter(action =>
+      actionsDescriptions[sport].hasOwnProperty(action.action_type)
+    );
+  }, [gameActions]);
+
   const renderItem = ({ item }) => {
-    const actionType = item.action_type;
-    // Get dictionary that has action type descriptions
-    const sportDic = actionsDescriptions[sport];
-    // Check if the action type is define in sport dictionary
-    const actionDesc = sportDic.hasOwnProperty(actionType)
-      ? sportDic[actionType]
-      : 'Acción desconocida';
-    // Get the roster corresponding to the team who performed the action
-    const roster = teamRosters[item.team];
-    let athleteName = '';
-    let athleteNumber = '';
-    // Check if athlete is in the roster
-    if (roster.hasOwnProperty(`athlete-${item.athlete_id}`)) {
-      const athlete = roster[`athlete-${item.athlete_id}`];
-      athleteName =
-        item.team == 'uprm'
-          ? [athlete.first_name, athlete.middle_name, athlete.last_names]
-              .filter(Boolean)
-              .join(' ')
-          : athlete.name;
-      athleteNumber = athlete.number;
-    } else {
-      athleteName = 'Atleta desconocido';
-      athleteNumber = '?';
-    }
+    const actionDesc = getActionDescription(sport, item.action_type);
+    const teamName = item.team == 'uprm' ? uprmName : opponentName;
+    const { athleteName, athleteNumber } = getAthleteInfo(
+      teamRosters,
+      item.team,
+      item.athlete_id
+    );
     return (
       <Action
-        key={item.id}
         action={actionDesc}
         name={athleteName}
         number={athleteNumber}
+        teamName={teamName}
       />
     );
   };
 
   return (
     <FlatList
-      data={gameActions}
+      data={actionData}
       keyExtractor={item => item.id.toString()}
       renderItem={renderItem}
       ItemSeparatorComponent={() => <View style={styles.divider} />}
@@ -78,10 +102,10 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    paddingLeft: 20,
+    paddingLeft: 10,
   },
   actionText: {
-    fontSize: 12,
+    fontSize: 13,
     textAlign: 'left',
   },
 });
@@ -98,6 +122,26 @@ const actionsDescriptions = {
     BlockPoint: 'Punto de Bloqueo',
     BlockingError: 'Error de Bloqueo',
     ReceptionError: 'Error de Recepción',
+  },
+  Futbol: {
+    Goal: 'Gol',
+    GoalAttempt: 'Tiro a portería',
+    Assist: 'Asistencia',
+    Tackle: 'Atajada',
+    Foul: 'Falta',
+    YellowCard: 'Tarjeta amarilla',
+    RedCard: 'Tarjeta roja',
+  },
+  Baloncesto: {
+    '2Points': 'Tiro de campo anotado',
+    '3Points': 'Tiro de 3 anotado',
+    Freethrow: 'Tiro libre anotado',
+    Assist: 'Asistencia',
+    Rebound: 'Rebote',
+    Steals: 'Robo de balón',
+    Blocks: 'Bloqueo',
+    Turnover: 'Pérdida de balón',
+    Foul: 'Falta',
   },
 };
 export default GameActions;

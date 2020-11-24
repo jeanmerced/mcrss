@@ -17,14 +17,14 @@ const useGameActions = (eventId, gameOver) => {
         by passing the id as key to the render element and identify 
         the action.  
         */
-        const actions = actionsSnapshot.val();
+        const actions = actionsSnapshot.val() ?? {};
         Object.keys(actions).forEach(key => (actions[key].id = key));
         setGameActions(Object.values(actions));
       });
     } else {
       // Game is live so listen to value changes
       gameActionsRef.on('value', actionsSnapshot => {
-        const actions = actionsSnapshot.val();
+        const actions = actionsSnapshot.val() ?? {};
         Object.keys(actions).forEach(key => (actions[key].id = key));
         // reverse array to get latest action first
         setGameActions(Object.values(actions).reverse());

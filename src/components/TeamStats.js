@@ -1,11 +1,18 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Text, FlatList, StyleSheet, View } from 'react-native';
 
+// Component to display a row on the team results
 const TableRow = ({ statDescription, uprmValue, opponentValue }) => (
   <View style={styles.row}>
-    <Text style={styles.col}>{uprmValue}</Text>
-    <Text style={[styles.col, { width: '60%' }]}>{statDescription}</Text>
-    <Text style={styles.col}>{opponentValue}</Text>
+    <View style={styles.cell}>
+      <Text style={styles.cellText}>{uprmValue}</Text>
+    </View>
+    <View style={[styles.cell, { width: '56%' }]}>
+      <Text style={styles.cellText}>{statDescription}</Text>
+    </View>
+    <View style={styles.cell}>
+      <Text style={styles.cellText}> {opponentValue}</Text>
+    </View>
   </View>
 );
 
@@ -19,8 +26,15 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
     gameActions.forEach(action => {
       if (sportsStats[sport].hasOwnProperty(action.action_type)) {
         teamStats[action.team][action.action_type]++;
-        if (action.action_type == 'BlockPoint') {
-          teamStats[action.team]['Block']++;
+        switch (action.action_type) {
+          case 'BlockPoint':
+            teamStats[action.team]['Block']++;
+            break;
+          case 'Goal':
+            teamStats[action.team]['GoalAttempt']++;
+            break;
+          default:
+            break;
         }
       }
     });
@@ -28,20 +42,44 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
   }, [gameActions]);
 
   const StatsHeader = () => (
-    <View style={styles.row}>
-      <Text style={[styles.col, { fontWeight: 'bold' }]}>{uprmName}</Text>
-      <Text style={[styles.col, { width: '60%', fontWeight: 'bold' }]}>
-        Estadísticas
-      </Text>
-      <Text style={[styles.col, { fontWeight: 'bold' }]}>{opponentName}</Text>
+    <View style={[styles.row, { backgroundColor: '#1B7744', height: 30 }]}>
+      <View style={styles.cell}>
+        <Text style={[styles.cellText, { fontWeight: 'bold', color: 'white' }]}>
+          {uprmName}
+        </Text>
+      </View>
+      <View style={[styles.cell, { width: '56%' }]}>
+        <Text style={[styles.cellText, { fontWeight: 'bold', color: 'white' }]}>
+          Estadísticas
+        </Text>
+      </View>
+      <View style={styles.cell}>
+        <Text style={[styles.cellText, { fontWeight: 'bold', color: 'white' }]}>
+          {opponentName}
+        </Text>
+      </View>
     </View>
   );
 
   const renderStats = ({ item }) => {
-    // item is a key from the sport dictionary
+    // item is a key from the stats dictionary
     const statDescription = statsDescriptions[sport][item];
-    const uprmValue = stats.uprm[item];
-    const opponentValue = stats.opponent[item];
+    let uprmValue = stats.uprm[item];
+    let opponentValue = stats.opponent[item];
+    // This applies to the game of basketball
+    // For field goals, 3 pointers and freethrows, we want the percentage as well
+    if (item == '2Points' || item == '3Points' || item == 'Freethrow') {
+      const uprmAttempts = uprmValue + stats.uprm[`${item}Miss`];
+      const oppAttempts = opponentValue + stats.opponent[`${item}Miss`];
+      if (uprmAttempts != 0) {
+        const uprmPercentage = ((uprmValue / uprmAttempts) * 100).toFixed(1);
+        uprmValue = `${uprmValue}/${uprmAttempts} (${uprmPercentage}%)`;
+      }
+      if (oppAttempts != 0) {
+        const oppPercentage = ((opponentValue / oppAttempts) * 100).toFixed(1);
+        opponentValue = `(${oppPercentage}%) ${opponentValue}/${oppAttempts}`;
+      }
+    }
     return (
       <TableRow
         statDescription={statDescription}
@@ -53,14 +91,12 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
 
   return (
     <FlatList
-      data={Object.keys(sportsStats[sport])}
+      data={Object.keys(statsDescriptions[sport])}
       ListHeaderComponent={StatsHeader}
       keyExtractor={item => item.toString()}
       renderItem={renderStats}
-      extraData={gameActions}
       ItemSeparatorComponent={() => <View style={styles.divider} />}
       ListEmptyComponent={() => <Text>No hay estadisticos de equipo</Text>}
-      contentContainerStyle={{ flexGrow: 1 }}
       stickyHeaderIndices={[0]}
     />
   );
@@ -75,17 +111,18 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   row: {
-    flex: 1,
     flexDirection: 'row',
-    height: 45,
-    backgroundColor: '#fff',
-    justifyContent: 'space-around',
+    backgroundColor: 'white',
     alignItems: 'center',
   },
-  col: {
-    textAlign: 'center',
-    fontSize: 12,
-    width: '20%',
+  cell: {
+    height: 45,
+    width: '22%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cellText: {
+    fontSize: 13,
   },
 });
 
@@ -102,6 +139,29 @@ const sportsStats = {
     BlockPoint: 0,
     BlockingError: 0,
   },
+  Futbol: {
+    Goal: 0,
+    GoalAttempt: 0,
+    Assist: 0,
+    Tackle: 0,
+    Foul: 0,
+    YellowCard: 0,
+    RedCard: 0,
+  },
+  Baloncesto: {
+    '2Points': 0,
+    '2PointsMiss': 0,
+    '3Points': 0,
+    '3PointsMiss': 0,
+    Freethrow: 0,
+    FreethrowMiss: 0,
+    Assist: 0,
+    Rebound: 0,
+    Steals: 0,
+    Blocks: 0,
+    Turnover: 0,
+    Foul: 0,
+  },
 };
 
 const statsDescriptions = {
@@ -116,6 +176,26 @@ const statsDescriptions = {
     BlockPoint: 'Puntos de Bloqueo',
     BlockingError: 'Errores de Bloqueo',
     ReceptionError: 'Errores de Recepción',
+  },
+  Futbol: {
+    Goal: 'Goles',
+    GoalAttempt: 'Tiros a portería',
+    Assist: 'Asistencias',
+    Tackle: 'Atajadas',
+    Foul: 'Faltas',
+    YellowCard: 'Tarjetas amarillas',
+    RedCard: 'Tarjetas rojas',
+  },
+  Baloncesto: {
+    '2Points': 'Tiros de campo',
+    '3Points': 'Tiros de 3',
+    Freethrow: 'Tiros libres',
+    Assist: 'Asistencias',
+    Rebound: 'Rebotes',
+    Steals: 'Robos de balón',
+    Blocks: 'Bloqueos',
+    Turnover: 'Pérdidas de balón',
+    Foul: 'Faltas',
   },
 };
 
