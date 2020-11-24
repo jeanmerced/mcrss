@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import moment from 'moment';
+import 'moment/locale/es';
 import { locale_es } from '_locale';
 import axios from 'axios';
 import {
   StyleSheet,
   SafeAreaView,
-  StatusBar,
   View,
   Text,
   FlatList,
@@ -16,27 +16,60 @@ import ResultCard from '_components/ResultCard';
 
 import { Colors } from '_styles';
 
+// When Calendar changes date we need to filter the events to be displayed
+const filterByDate = (eventsArr, date) => {
+  /* 
+    We want to compare year, month and date; not time. Format both
+    the selectedDate and event_date to 'yyyy-mm-dd' so that they
+    can be comapred properly.
+    */
+  const formatDate = moment(date).format('YYYY-MM-DD');
+  const filterEvents = eventsArr.filter(sportEvent => {
+    const formatEventDate = moment(sportEvent.event_date).format('YYYY-MM-DD');
+    return moment(formatEventDate).isSame(formatDate);
+  });
+  return filterEvents;
+};
+
+const markDates = eventsArr => {
+  const markingDates = [];
+  /* 
+  To mark dates in the strip calendar, you have to provide
+  an array of objects like the object markDate returns. More
+  on react-native-calendar-strip
+  */
+  const markDate = date => ({ date, dots: [{ color: '#1B7744' }] });
+  for (const event of eventsArr) {
+    markingDates.push(markDate(event.event_date));
+  }
+  return markingDates;
+};
+
 const eventsUrl = 'https://white-smile-272204.ue.r.appspot.com/events/';
 
 const ResultsScreen = ({ navigation }) => {
   // Display loading when fetching data. This variable is
   // also use when refreshing the Flatlist to show pull refresh
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   // Array of all sport events when they are fetch
   const [sportEvents, setSportEvents] = useState([]);
-  // Filtered events when a date has been selected in the calendar
-  const [filteredEvents, setFilteredEvents] = useState([]);
   // Array of event dates to mark the calendar
-  const [eventDates, setEventDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(() => moment());
   // Reference to calendar strip to get the selected date on refresh
   const calendarRef = useRef(null);
 
-  /*
-  getEvent will fetch all events. If date is pass it
-  will call filterByDate. Since first fetch we filter
-  to only show events for today
-  */
-  const getEvents = date => {
+  // The Results only shows filtered results
+  // Events are filter only when selected date or sportEvents changes
+  const filteredEvents = useMemo(
+    () => filterByDate(sportEvents, selectedDate),
+    [sportEvents, selectedDate]
+  );
+
+  // When sportEvents changes or are fetch we mark the dates with events in the calendar
+  const markedDates = useMemo(() => markDates(sportEvents), [sportEvents]);
+
+  // Fetch all sport events
+  const getEvents = () => {
     // Begin fetch, set loading
     setLoading(true);
     axios
@@ -44,14 +77,6 @@ const ResultsScreen = ({ navigation }) => {
       .then(res => {
         // Response has a field 'data' that holds the Events[]
         const allEvents = res.data.Events;
-        // Array of marked dates (dates with event)
-        const markingDates = [];
-        /* 
-        To mark dates in the strip calendar, you have to provide
-        an array of objects like the object markDate returns. More
-        on react-native-calendar-strip
-        */
-        const markDate = date => ({ date, dots: [{ color: '#1B7744' }] });
         allEvents.forEach(sportEvent => {
           /* 
           Do some formating: add the hasPBP to every event since
@@ -59,46 +84,20 @@ const ResultsScreen = ({ navigation }) => {
           add false, otherwise add its value.
           */
           sportEvent['hasPBP'] = sportEvent.hasPBP ?? false;
-          // Add the event date to the calendar
-          markingDates.push(markDate(sportEvent.event_date));
         });
         // Fetch and processing has ended, set loading to false.
         setLoading(false);
         setSportEvents(allEvents);
-        setEventDates(markingDates);
-        if (date) filterByDate(allEvents, date);
       })
       .catch(err => console.log(err));
   };
 
-  // When Calendar changes date we need to filter the events to be displayed
-  // Function is trigger by the calendar strip onDateSelected
-  const filterByDate = (eventsArr, date) => {
-    /* 
-    We want to compare year, month and date; not time. Format both
-    the selectedDate and event_date to 'yyyy-mm-dd' so that they
-    can be comapred properly.
-    */
-    const formatSelected = moment(date).format('YYYY-MM-DD');
-    const filterEvents = eventsArr.filter(sportEvent => {
-      const formatEventDate = moment(sportEvent.event_date).format(
-        'YYYY-MM-DD'
-      );
-      return moment(formatEventDate).isSame(formatSelected);
-    });
-    setFilteredEvents(filterEvents);
-  };
-  const handleRefresh = () => {
-    getEvents(calendarRef.current.getSelectedDate());
-  };
-
   // Fetch events when Result Screen is mounted
   useEffect(() => {
-    // When component mounts set calendar date to today's date,
-    // fetch events and filter the event list for today events
+    // When component mounts set calendar date to today's date
     const today = moment();
-    getEvents(today);
     calendarRef.current.setSelectedDate(today);
+    getEvents();
   }, []);
 
   const EmptyList = () => (
@@ -141,13 +140,13 @@ const ResultsScreen = ({ navigation }) => {
         scrollable
         ref={calendarRef}
         locale={locale_es}
-        markedDates={eventDates}
+        markedDates={markedDates}
         style={{ height: 85, paddingTop: 10, paddingBottom: 10 }}
         calendarColor={'white'}
         calendarHeaderStyle={{ color: 'black', fontSize: 12, marginBottom: 10 }}
-        dateNumberStyle={{ color: 'gray', fontSize: 15 }}
+        dateNumberStyle={{ color: 'gray', fontSize: 14 }}
         dateNameStyle={{ color: 'gray' }}
-        onDateSelected={date => filterByDate(sportEvents, date)}
+        onDateSelected={setSelectedDate}
         leftSelector={[]}
         rightSelector={[]}
       />
@@ -158,7 +157,7 @@ const ResultsScreen = ({ navigation }) => {
         renderItem={renderEvent}
         ListEmptyComponent={EmptyList}
         refreshing={loading}
-        onRefresh={handleRefresh}
+        onRefresh={getEvents}
       />
     </SafeAreaView>
   );
@@ -168,11 +167,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.screenBackground,
-  },
-  text: {
-    color: 'darkslateblue',
-    fontSize: 30,
-    textAlign: 'center',
   },
 });
 
