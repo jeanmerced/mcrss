@@ -44,19 +44,13 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
   const StatsHeader = () => (
     <View style={[styles.row, { backgroundColor: '#1B7744', height: 30 }]}>
       <View style={styles.cell}>
-        <Text style={[styles.cellText, { fontWeight: 'bold', color: 'white' }]}>
-          {uprmName}
-        </Text>
+        <Text style={[styles.cellText, styles.headerText]}>{uprmName}</Text>
       </View>
       <View style={[styles.cell, { width: '56%' }]}>
-        <Text style={[styles.cellText, { fontWeight: 'bold', color: 'white' }]}>
-          Estadísticas
-        </Text>
+        <Text style={[styles.cellText, styles.headerText]}>Estadísticas</Text>
       </View>
       <View style={styles.cell}>
-        <Text style={[styles.cellText, { fontWeight: 'bold', color: 'white' }]}>
-          {opponentName}
-        </Text>
+        <Text style={[styles.cellText, styles.headerText]}>{opponentName}</Text>
       </View>
     </View>
   );
@@ -89,6 +83,7 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
     );
   };
 
+  // When rendering stats we want to show statistics that have their descriptions
   return (
     <FlatList
       data={Object.keys(statsDescriptions[sport])}
@@ -114,6 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'center',
+    paddingHorizontal: 5,
   },
   cell: {
     height: 45,
@@ -123,6 +119,10 @@ const styles = StyleSheet.create({
   },
   cellText: {
     fontSize: 13,
+  },
+  headerText: {
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
 

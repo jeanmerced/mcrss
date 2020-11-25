@@ -31,11 +31,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: 'bold',
     color: 'white',
-    fontSize: 12,
-  },
-  cardText: {
-    paddingHorizontal: 20,
-    textAlign: 'left',
+    fontSize: 13,
   },
 });
 

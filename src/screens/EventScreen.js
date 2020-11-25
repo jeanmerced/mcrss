@@ -7,11 +7,17 @@ import {
   StatusBar,
   Dimensions,
 } from 'react-native';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
-import { useGameActions, useTeamRosters, useGameStatus } from '_hooks';
+import { TabView, TabBar } from 'react-native-tab-view';
+import {
+  useGameActions,
+  useTeamRosters,
+  useGameStatus,
+  usePartialScores,
+} from '_hooks';
 import GameActions from '_components/GameActions';
 import TeamStats from '_components/TeamStats';
 import AthleteStats from '_components/AthleteStats';
+import ScoreBox from '_components/ScoreBox';
 import { Colors } from '_styles';
 
 const EventScreen = ({ route }) => {
@@ -19,6 +25,7 @@ const EventScreen = ({ route }) => {
   const gameStatus = useGameStatus(eventId);
   const gameActions = useGameActions(eventId, gameStatus);
   const teamRosters = useTeamRosters(eventId, gameStatus);
+  const partialScores = usePartialScores(eventId);
 
   /* 
   TabView behaves like a navigator, for this reason we create
@@ -28,7 +35,7 @@ const EventScreen = ({ route }) => {
   */
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'teams', title: 'Resultados' },
+    { key: 'teams', title: 'Puntuación' },
     { key: 'pbp', title: 'Jugadas' },
     { key: 'athletes', title: 'Estadísticas' },
   ]);
@@ -37,11 +44,11 @@ const EventScreen = ({ route }) => {
     switch (route.key) {
       case 'teams':
         return (
-          <TeamStats
+          <ScoreBox
             sport={sport}
-            gameActions={gameActions}
             uprmName={uprmName}
             opponentName={oppName}
+            partialScores={partialScores}
           />
         );
       case 'pbp':
@@ -51,17 +58,32 @@ const EventScreen = ({ route }) => {
             sport={sport}
             gameActions={gameActions}
             teamRosters={teamRosters}
+            uprmName={uprmName}
+            opponentName={oppName}
           />
         );
       case 'athletes':
-        return <Text>tabla atletas</Text>;
+        return (
+          <AthleteStats
+            key={'athlete-stats'}
+            sport={sport}
+            gameActions={gameActions}
+            team={'uprm'}
+            roster={teamRosters.uprm}
+          />
+        );
       default:
         return null;
     }
   };
 
   const renderTabBar = props => (
-    <TabBar {...props} indicatorStyle={{ backgroundColor: '#1B7744' }} />
+    <TabBar
+      {...props}
+      style={{ backgroundColor: 'white', marginBottom: 8 }}
+      indicatorStyle={{ backgroundColor: '#1B7744', height: 4 }}
+      labelStyle={{ fontSize: 13, fontWeight: 'bold', color: 'black' }}
+    />
   );
 
   return (

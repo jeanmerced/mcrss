@@ -1,5 +1,4 @@
-import { duration } from 'moment';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Animated,
   FlatList,
@@ -7,49 +6,43 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions,
 } from 'react-native';
-import { TabView, TabBar } from 'react-native-tab-view';
-import { Colors } from '_styles/';
+import { Colors } from '_styles';
 
 const getPercentage = (numerator, denominator) => {
   const result = ((numerator / denominator) * 100).toFixed(1);
   return !isNaN(result) ? result : 0;
 };
 
-const AthleteTable = ({
-  sport,
-  gameActions,
-  teamRosters,
-  uprmName,
-  opponentName,
-}) => {
-  const [stats, setStats] = useState({ uprm: {}, opponent: {} });
+const getAthleteName = (athleteId, team) => {
+  const name =
+    team == 'uprm'
+      ? [athleteId.first_name, athleteId.middle_name, athleteId.last_names]
+          .filter(Boolean)
+          .join(' ')
+      : athleteId.name;
+  return name;
+};
+
+// sport: which sport for the stats
+// gameActions: all game actions from firebase
+// team: either uprm or opponent
+// roster: team roster from firebase
+const AthleteStats = ({ sport, gameActions, team, roster }) => {
+  const [stats, setStats] = useState({});
 
   // Sync header scroll with list scroll
-  const headerScrollView1 = useRef(null);
-  const headerScrollView2 = useRef(null);
+  const headerScrollView = useRef(null);
   const scrollPosition = useRef(new Animated.Value(0));
   const scrollEvent = Animated.event(
     [{ nativeEvent: { contentOffset: { x: scrollPosition.current } } }],
     { useNativeDriver: false }
   );
 
-  // Configuring tab views
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    { key: 'uprm', title: uprmName },
-    { key: 'opponent', title: opponentName },
-  ]);
-
   useEffect(() => {
     // Attach listener to scroll position
     scrollPosition.current.addListener(position => {
-      headerScrollView1.current.scrollTo({
-        x: position.value,
-        animated: false,
-      });
-      headerScrollView2.current.scrollTo({
+      headerScrollView.current.scrollTo({
         x: position.value,
         animated: false,
       });
@@ -58,80 +51,75 @@ const AthleteTable = ({
 
   useEffect(() => {
     /* 
-    Get Rosters. A roster is an object where keys have other
+    Initialized roster. A roster is an object where keys have other
     objects as values. The main key is athlete id and the value
     is athlete info.
     */
-    const uprmAthletes = { ...teamRosters.uprm };
-    const oppAthletes = { ...teamRosters.opponent };
+    const teamRoster = {};
     // Add Stats to every athlete
-    Object.entries(uprmAthletes).forEach(([key, value]) => {
+    Object.entries(roster ?? {}).forEach(([key, value]) => {
       // Merge athlete info with sport stats
-      uprmAthletes[key] = { ...value, ...sportsStats[sport] };
-    });
-    Object.entries(oppAthletes).forEach(([key, value]) => {
-      oppAthletes[key] = { ...value, ...sportsStats[sport] };
+      teamRoster[key] = { ...value, ...sportsStats[sport] };
     });
     // Put in a single object for easier look up
     // All stats has 3 levels Rosters - Athletes - Stats
-    const allStats = {
-      uprm: { ...uprmAthletes },
-      opponent: { ...oppAthletes },
-    };
     for (const action of gameActions) {
-      if (sportsStats[sport].hasOwnProperty(action.action_type)) {
-        const team = action.team;
-        const athleteId = `athlete-${action.athlete_id}`;
-        const actionType = action.action_type;
-        // Check if athlete is in Roster
-        if (allStats[team].hasOwnProperty(athleteId)) {
-          allStats[team][athleteId][actionType]++;
-          switch (actionType) {
-            case 'BlockPoint':
-              allStats[team][athleteId]['Block']++;
-              break;
-            case 'Goal':
-              allStats[team][athleteId]['GoalAttempt']++;
-              break;
-            case '2Points':
-              allStats[team][athleteId]['Points'] += 2;
-              allStats[team][athleteId]['2PointsAttempts']++;
-              break;
-            case '2PointsMiss':
-              allStats[team][athleteId]['2PointsAttempts']++;
-              break;
-            case '3Points':
-              allStats[team][athleteId]['Points'] += 3;
-              allStats[team][athleteId]['3PointsAttempts']++;
-              break;
-            case '3PointsMiss':
-              allStats[team][athleteId]['3PointsAttempts']++;
-              break;
-            case 'Freethrow':
-              allStats[team][athleteId]['Points']++;
-              allStats[team][athleteId]['FreethrowAttempts']++;
-            case 'FreethrowMiss':
-              allStats[team][athleteId]['FreethrowAttempts']++;
+      if (action.team == team) {
+        if (sportsStats[sport].hasOwnProperty(action.action_type)) {
+          const athleteId = `athlete-${action.athlete_id}`;
+          const actionType = action.action_type;
+          // Check if athlete is in roster
+          if (teamRoster.hasOwnProperty(athleteId)) {
+            teamRoster[athleteId][actionType]++;
+            switch (actionType) {
+              case 'BlockPoint':
+                teamRoster[athleteId]['Block']++;
+                break;
+              case 'Goal':
+                teamRoster[athleteId]['GoalAttempt']++;
+                break;
+              case '2Points':
+                teamRoster[athleteId]['Points'] += 2;
+                teamRoster[athleteId]['2PointsAttempts']++;
+                break;
+              case '2PointsMiss':
+                teamRoster[athleteId]['2PointsAttempts']++;
+                break;
+              case '3Points':
+                teamRoster[athleteId]['Points'] += 3;
+                teamRoster[athleteId]['3PointsAttempts']++;
+                break;
+              case '3PointsMiss':
+                teamRoster[athleteId]['3PointsAttempts']++;
+                break;
+              case 'Freethrow':
+                teamRoster[athleteId]['Points']++;
+                teamRoster[athleteId]['FreethrowAttempts']++;
+              case 'FreethrowMiss':
+                teamRoster[athleteId]['FreethrowAttempts']++;
+                break;
 
-              break;
-
-            default:
-              break;
+              default:
+                break;
+            }
           }
         }
       }
     }
-    setStats({ ...allStats });
-  }, [gameActions, teamRosters]);
+
+    setStats({ ...teamRoster });
+  }, [gameActions, roster]);
 
   // this function renders a single stats colum for all players
-  // item is the key for the colum
-  const formatColumn = (stat, team) => {
+  // item is the key of the statistic for the column
+  const formatColumn = ({ item }) => {
     // value is the athlete with the stats
-    const col = Object.entries(stats[team]).map(([key, value]) => {
+    // in the map key is athlete id and  and value athlete info and stats
+    const col = Object.entries(stats).map(([key, value]) => {
       let statsVal = 0;
-      // for basketball we dont show miss values but we show percentage
-      switch (stat) {
+      // For the sport of basketball when Miss stats come up we take that slot
+      // to show percentage
+      switch (item) {
         case '2PointsMiss':
           statsVal = getPercentage(value['2Points'], value['2PointsAttempts']);
           break;
@@ -148,11 +136,11 @@ const AthleteTable = ({
           break;
 
         default:
-          statsVal = value[stat];
+          statsVal = value[item];
           break;
       }
       return (
-        <View key={`${stat}-${key}`} style={styles.cell}>
+        <View key={`${item}-${key}`} style={styles.cell}>
           <Text style={styles.cellText}>{statsVal}</Text>
         </View>
       );
@@ -160,33 +148,24 @@ const AthleteTable = ({
     return <View>{col}</View>;
   };
 
-  // Get the athlete name
-  const Athlete = (key, value, team) => {
-    const name =
-      team == 'uprm'
-        ? [value.first_name, value.middle_name, value.last_names]
-            .filter(Boolean)
-            .join(' ')
-        : value.name;
-    return (
-      <View key={`uprm-${key}`} style={styles.firstCol}>
-        <Text style={styles.cellText}>
-          #{value.number} <Text style={{ fontWeight: 'bold' }}>{name}</Text>
-        </Text>
-      </View>
-    );
-  };
-
-  // the first colum is sticky and is to get players
-  const firstColumn = team => (
+  // the first colum is sticky and is to for players
+  const firstColumn = (
     <View style={styles.identity}>
-      {Object.entries(stats[team]).map(([key, value]) =>
-        Athlete(key, value, team)
-      )}
+      {Object.entries(stats).map(([key, value]) => {
+        const name = getAthleteName(value, team);
+        return (
+          <View key={`uprm-${key}`} style={styles.firstCol}>
+            <Text style={styles.cellText}>
+              #{value.number}
+              <Text style={{ fontWeight: 'bold' }}> {name}</Text>
+            </Text>
+          </View>
+        );
+      })}
     </View>
   );
 
-  const Header = ref => (
+  const Header = () => (
     <View style={styles.header}>
       {/* First cell top left corner */}
       <View style={[styles.firstCol, { height: 30 }]}>
@@ -195,7 +174,8 @@ const AthleteTable = ({
       {/* Column Headers. The header is sync with the content*/}
       <ScrollView
         horizontal
-        ref={ref}
+        showsHorizontalScrollIndicator={false}
+        ref={headerScrollView}
         scrollEnabled={false}
         scrollEventThrottle={16}
       >
@@ -209,66 +189,27 @@ const AthleteTable = ({
     </View>
   );
 
-  const Table = team => (
+  const table = (
     <View style={{ backgroundColor: 'white' }}>
-      {firstColumn(team)}
+      {firstColumn}
       <FlatList
         horizontal
         style={{ marginLeft: FIRST_COL_WIDTH }}
         data={Object.keys(sportsStats[sport])}
-        keyExtractor={item => item}
-        renderItem={({ item }) => formatColumn(item, team)}
+        keyExtractor={item => `${team}-${item}`}
+        renderItem={formatColumn}
         stickyHeaderIndices={[0]}
         onScroll={scrollEvent}
       />
     </View>
   );
 
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-      style={styles.tabBar}
-      inactiveColor={'black'}
-      activeColor={'white'}
-      indicatorStyle={styles.tabIndicator}
-      labelStyle={{ fontSize: 13, fontWeight: 'bold' }}
-      contentContainerStyle={{ height: 40, alignItems: 'center' }}
-    />
-  );
-
-  const renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'uprm':
-        return (
-          <FlatList
-            data={[{ key: 'table', render: Table('uprm') }]}
-            renderItem={({ item }) => item.render}
-            ListHeaderComponent={Header(headerScrollView1)}
-            stickyHeaderIndices={[0]}
-          />
-        );
-      case 'opponent':
-        return (
-          <FlatList
-            data={[{ key: 'table', render: Table('opponent') }]}
-            renderItem={({ item }) => item.render}
-            ListHeaderComponent={Header(headerScrollView2)}
-            stickyHeaderIndices={[0]}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      swipeEnabled={false}
-      renderTabBar={renderTabBar}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: Dimensions.get('window').width }}
+    <FlatList
+      data={[{ key: 'table', render: table }]}
+      renderItem={({ item }) => item.render}
+      ListHeaderComponent={Header}
+      stickyHeaderIndices={[0]}
     />
   );
 };
@@ -300,6 +241,7 @@ const styles = StyleSheet.create({
     width: FIRST_COL_WIDTH,
     alignItems: 'flex-start',
     paddingLeft: 10,
+    paddingRight: 5,
     justifyContent: 'center',
     borderRightWidth: 0.5,
     borderColor: 'gray',
@@ -355,7 +297,7 @@ const sportsStats = {
     Points: 0,
     '2Points': 0,
     '2PointsAttempts': 0,
-    '2PointsMiss': 0,
+    '2PointsMiss': 0, //
     '3Points': 0,
     '3PointsAttempts': 0,
     '3PointsMiss': 0,
@@ -397,13 +339,13 @@ const statsAbbreviation = {
     'PTS', // Points
     'FGM', // 2Points
     'FGA', // 2Points Attempt
-    'FG%', // Field Percentage
+    'FG%', // Field Percentage (will take the place of 2PointsMiss)
     '3PM', // 3Points
     '3PA', // 3Points Attempt
-    '3P%', // 3Points Percentage
+    '3P%', // 3Points Percentage (will take the place of 3PointsMiss)
     'FTM', // Freethrow
     'FTA', // Freethrow Attemp
-    'FT%', // Freethrow Percentage
+    'FT%', // Freethrow Percentage (will take the place of FreethrowMiss)
     'AST', // Assist
     'REB', // Rebound
     'STL', // Steals
@@ -437,4 +379,4 @@ const statsDescriptions = {
   },
 };
 
-export default AthleteTable;
+export default AthleteStats;
