@@ -8,27 +8,30 @@ const Stack = createStackNavigator();
 
 const ResultsStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Results">
+    <Stack.Navigator initialRouteName="Results" screenOptions={screenOptions}>
       <Stack.Screen
         name="Results"
         component={ResultsScreen}
-        options={screenOptions}
+        options={{ title: 'Resultados' }}
       />
-      <Stack.Screen name="Event" component={EventScreen} />
+      <Stack.Screen
+        name="Event"
+        component={EventScreen}
+        options={({ route }) => ({ title: route.params.title })}
+      />
     </Stack.Navigator>
   );
 };
 
 const screenOptions = {
-  title: 'Resultados',
   headerStyle: {
     backgroundColor: Colors.headerBackground,
   },
   headerTintColor: '#fff',
   headerTitleStyle: {
     fontWeight: 'bold',
-    fontSize: 23,
   },
+  headerBackTitleVisible: false,
 };
 
 export default ResultsStack;

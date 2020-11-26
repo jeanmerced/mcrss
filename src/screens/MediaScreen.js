@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, StatusBar } from 'react-native';
 
 const MediaScreen = () => {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle={'light-content'} />
       <Text style={styles.text}>Media View</Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

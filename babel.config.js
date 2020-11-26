@@ -13,6 +13,7 @@ module.exports = function (api) {
             _styles: './src/styles',
             _firebase: './src/firebase',
             _hooks: './src/hooks',
+            _locale: './src/locale',
           },
         },
       ],

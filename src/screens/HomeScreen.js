@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import StatsTable from '_components/StatsTable';
+import { StyleSheet, Text, View, SafeAreaView, StatusBar } from 'react-native';
 
 const HomeScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <StatsTable></StatsTable>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle={'light-content'} />
+      <Text style={styles.text}>Home View</Text>
+    </SafeAreaView>
   );
 };
 

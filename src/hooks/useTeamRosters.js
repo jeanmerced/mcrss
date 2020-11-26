@@ -6,11 +6,11 @@ import { firebase } from '_firebase';
  * @param {number} eventId ID of the event
  * @param {boolean} gameOver Game status, ended or ongoing
  */
-const useTeamRosters = (eventId, gameOver = false) => {
+const useTeamRosters = (eventId, gameOver) => {
+  const database = firebase.database();
   const [uprmRoster, setUprmRoster] = useState({});
   const [opponentRoster, setOpponentRoster] = useState({});
   useEffect(() => {
-    const database = firebase.database();
     const uprmRosterRef = database.ref(`v1/${eventId}/uprm-roster`);
     const opponentRosterRef = database.ref(`v1/${eventId}/opponent-roster`);
     // If the game has ended only fetch the rosters once since there will be no changes
@@ -23,10 +23,13 @@ const useTeamRosters = (eventId, gameOver = false) => {
       );
     } else {
       // If the game is not over listen to roster changes
+
+      //UPRM Listener
       uprmRosterRef.on('value', rosterSnapshot =>
         setUprmRoster(rosterSnapshot.val())
       );
-      opponentRosterRef.once('value', rosterSnapshot =>
+      // Opponent Listener
+      opponentRosterRef.on('value', rosterSnapshot =>
         setOpponentRoster(rosterSnapshot.val())
       );
     }
@@ -35,7 +38,7 @@ const useTeamRosters = (eventId, gameOver = false) => {
       uprmRosterRef.off();
       opponentRosterRef.off();
     };
-  }, [eventId, gameOver]);
+  }, [gameOver]);
   return { uprm: uprmRoster, opponent: opponentRoster };
 };
 
