@@ -10,12 +10,12 @@ const StatsTable = ({ sport, gameActions }) => {
       uprm: { ...sportsStatsDic[sport] },
       opponent: { ...sportsStatsDic[sport] },
     };
-    gameActions.forEach(action => {
+   /* gameActions.forEach(action => {
       teamStats[action.team][action.action_type] += 1;
       if (action.action_type == 'BlockPoint') {
         teamStats[action.team]['Block'] += 1;
       }
-    });
+    });*/
     setStats({ ...teamStats });
   }, [gameActions]);
 
