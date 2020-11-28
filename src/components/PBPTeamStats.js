@@ -1,22 +1,31 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Text, FlatList, StyleSheet, View } from 'react-native';
+import { depth1 } from '_styles/elevations';
 
 // Component to display a row on the team results
-const TableRow = ({ statDescription, uprmValue, opponentValue }) => (
+const TableRow = ({ statDescription, homeValue, awayValue }) => (
   <View style={styles.row}>
     <View style={styles.cell}>
-      <Text style={styles.cellText}>{uprmValue}</Text>
+      <Text style={styles.cellText}>{homeValue}</Text>
     </View>
-    <View style={[styles.cell, { width: '56%' }]}>
+    <View style={[styles.cell, { flex: 2 }]}>
       <Text style={styles.cellText}>{statDescription}</Text>
     </View>
     <View style={styles.cell}>
-      <Text style={styles.cellText}> {opponentValue}</Text>
+      <Text style={styles.cellText}>{awayValue}</Text>
     </View>
   </View>
 );
 
-const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
+const PBPTeamStats = ({
+  sport,
+  isLocal,
+  uprmName,
+  opponentName,
+  gameActions,
+}) => {
+  const homeName = isLocal ? uprmName : opponentName;
+  const awayName = !isLocal ? uprmName : opponentName;
   const [stats, setStats] = useState(() => ({ uprm: {}, opponent: {} }));
   useEffect(() => {
     const teamStats = {
@@ -33,6 +42,15 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
           case 'Goal':
             teamStats[action.team]['GoalAttempt']++;
             break;
+          case 'RunBattedIn':
+            teamStats[action.team]['Run']++;
+            break;
+          case 'Homerun':
+            teamStats[action.team]['Run']++;
+            teamStats[action.team]['Hit']++;
+            teamStats[action.team]['RunBattedIn']++;
+            break;
+
           default:
             break;
         }
@@ -44,13 +62,13 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
   const StatsHeader = () => (
     <View style={[styles.row, { backgroundColor: '#1B7744', height: 30 }]}>
       <View style={styles.cell}>
-        <Text style={[styles.cellText, styles.headerText]}>{uprmName}</Text>
+        <Text style={[styles.cellText, styles.headerText]}>{homeName}</Text>
       </View>
-      <View style={[styles.cell, { width: '56%' }]}>
+      <View style={[styles.cell, { flex: 2 }]}>
         <Text style={[styles.cellText, styles.headerText]}>Estadísticas</Text>
       </View>
       <View style={styles.cell}>
-        <Text style={[styles.cellText, styles.headerText]}>{opponentName}</Text>
+        <Text style={[styles.cellText, styles.headerText]}>{awayName}</Text>
       </View>
     </View>
   );
@@ -74,11 +92,21 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
         opponentValue = `(${oppPercentage}%) ${opponentValue}/${oppAttempts}`;
       }
     }
+    let homeValue;
+    let awayValue;
+
+    if (isLocal) {
+      homeValue = uprmValue;
+      awayValue = opponentValue;
+    } else {
+      homeValue = opponentValue;
+      awayValue = uprmValue;
+    }
     return (
       <TableRow
         statDescription={statDescription}
-        uprmValue={uprmValue}
-        opponentValue={opponentValue}
+        homeValue={homeValue}
+        awayValue={awayValue}
       />
     );
   };
@@ -87,10 +115,11 @@ const TeamStats = ({ sport, uprmName, opponentName, gameActions }) => {
   return (
     <FlatList
       data={Object.keys(statsDescriptions[sport])}
-      ListHeaderComponent={StatsHeader}
+      style={depth1}
       keyExtractor={item => item.toString()}
       renderItem={renderStats}
       ItemSeparatorComponent={() => <View style={styles.divider} />}
+      ListHeaderComponent={StatsHeader}
       ListEmptyComponent={() => <Text>No hay estadisticos de equipo</Text>}
       stickyHeaderIndices={[0]}
     />
@@ -112,8 +141,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   cell: {
+    flex: 1,
     height: 45,
-    width: '22%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -162,6 +191,26 @@ const sportsStats = {
     Turnover: 0,
     Foul: 0,
   },
+  Beisbol: {
+    AtBat: 0,
+    Run: 0,
+    Hit: 0,
+    RunBattedIn: 0,
+    BaseOnBall: 0,
+    StrikeOut: 0,
+    LeftOnBase: 0,
+    Homerun: 0,
+  },
+  Softbol: {
+    AtBat: 0,
+    Run: 0,
+    Hit: 0,
+    RunBattedIn: 0,
+    BaseOnBall: 0,
+    StrikeOut: 0,
+    LeftOnBase: 0,
+    Homerun: 0,
+  },
 };
 
 const statsDescriptions = {
@@ -197,6 +246,26 @@ const statsDescriptions = {
     Turnover: 'Pérdidas de balón',
     Foul: 'Faltas',
   },
+  Beisbol: {
+    AtBat: 'Al Bate',
+    Run: 'Carreras',
+    Hit: 'Hits',
+    RunBattedIn: 'Carreras empujadas',
+    BaseOnBall: 'Base por bola',
+    StrikeOut: 'Ponches',
+    LeftOnBase: 'Dejado en base',
+    Homerun: 'Cuadrangulares',
+  },
+  Softbol: {
+    AtBat: 'Al Bate',
+    Run: 'Carreras',
+    Hit: 'Hits',
+    RunBattedIn: 'Carreras empujadas',
+    BaseOnBall: 'Base por bola',
+    StrikeOut: 'Ponches',
+    LeftOnBase: 'Dejado en base',
+    Homerun: 'Cuadrangulares',
+  },
 };
 
-export default TeamStats;
+export default memo(PBPTeamStats);

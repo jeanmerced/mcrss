@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { depth1 } from '_styles/elevations';
 
 const ResultCard = ({ sportName, uprmName, opponentName, location }) => {
   return (
-    <View style={styles.eventCard}>
+    <View style={[styles.eventCard, depth1]}>
       <View style={styles.cardHeader}>
         <Text style={styles.headerText}>{sportName}</Text>
       </View>
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     height: 80,
     margin: 10,
     borderRadius: 5,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
     alignItems: 'stretch',
   },
   cardHeader: {

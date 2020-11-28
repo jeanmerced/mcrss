@@ -1,2 +1,2 @@
-export const screenBackground = '#F0F0F0';
+export const screenBackground = '#F6F6F6';
 export const headerBackground = '#1B7744';

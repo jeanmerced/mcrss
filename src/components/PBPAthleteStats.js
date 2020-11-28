@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Colors } from '_styles';
+import { Colors, Elevations } from '_styles';
 
 const getPercentage = (numerator, denominator) => {
   const result = ((numerator / denominator) * 100).toFixed(1);
@@ -28,7 +28,7 @@ const getAthleteName = (athleteId, team) => {
 // gameActions: all game actions from firebase
 // team: either uprm or opponent
 // roster: team roster from firebase
-const AthleteStats = ({ sport, gameActions, team, roster }) => {
+const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
   const [stats, setStats] = useState({});
 
   // Sync header scroll with list scroll
@@ -95,6 +95,7 @@ const AthleteStats = ({ sport, gameActions, team, roster }) => {
               case 'Freethrow':
                 teamRoster[athleteId]['Points']++;
                 teamRoster[athleteId]['FreethrowAttempts']++;
+                break;
               case 'FreethrowMiss':
                 teamRoster[athleteId]['FreethrowAttempts']++;
                 break;
@@ -206,6 +207,7 @@ const AthleteStats = ({ sport, gameActions, team, roster }) => {
 
   return (
     <FlatList
+      style={Elevations.depth1}
       data={[{ key: 'table', render: table }]}
       renderItem={({ item }) => item.render}
       ListHeaderComponent={Header}
@@ -255,19 +257,6 @@ const styles = StyleSheet.create({
   cellText: {
     fontSize: 13,
   },
-  tabBar: {
-    backgroundColor: 'white',
-    marginBottom: 8,
-    width: '80%',
-    marginLeft: '10%',
-    borderRadius: 10,
-  },
-  tabIndicator: {
-    backgroundColor: '#1B7744',
-    height: 34,
-    marginBottom: 3,
-    borderRadius: 10,
-  },
 });
 
 // Sports statistics need to be define in the same order as their abbreviation
@@ -311,6 +300,26 @@ const sportsStats = {
     Turnover: 0,
     Foul: 0,
   },
+  Beisbol: {
+    AtBat: 0,
+    Run: 0,
+    Hit: 0,
+    Homerun: 0,
+    RunBattedIn: 0,
+    BaseOnBall: 0,
+    StrikeOut: 0,
+    LeftOnBase: 0,
+  },
+  Softbol: {
+    AtBat: 0,
+    Run: 0,
+    Hit: 0,
+    Homerun: 0,
+    RunBattedIn: 0,
+    BaseOnBall: 0,
+    StrikeOut: 0,
+    LeftOnBase: 0,
+  },
 };
 
 const statsAbbreviation = {
@@ -353,6 +362,26 @@ const statsAbbreviation = {
     'TOV', // Turnover
     'PF', // Foul
   ],
+  Beisbol: [
+    'AB', // At Bat
+    'R', // Run
+    'H', // Hit
+    'HR', // Homerun
+    'RBI', // RunsBattedIn
+    'BB', // BaseOnBall
+    'SO', // StrikeOut
+    'LOB', // LeftOnBase
+  ],
+  Softbol: [
+    'AB', // At Bat
+    'R', // Run
+    'H', // Hit
+    'HR', // Homerun
+    'RBI', // RunsBattedIn
+    'BB', // BaseOnBall
+    'SO', // StrikeOut
+    'LOB', // LeftOnBase
+  ],
 };
 
 const statsDescriptions = {
@@ -379,4 +408,4 @@ const statsDescriptions = {
   },
 };
 
-export default AthleteStats;
+export default PBPAthleteStats;
