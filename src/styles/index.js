@@ -1,2 +1,3 @@
 import * as Colors from './colors';
-export { Colors };
+import * as Elevations from './elevations';
+export { Colors, Elevations };

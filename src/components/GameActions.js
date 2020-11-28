@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { depth1 } from '_styles/elevations';
 
 const getActionDescription = (sport, actionType) => {
   const sportDictionary = actionsDescriptions[sport];
@@ -51,9 +52,17 @@ const GameActions = ({
 }) => {
   // Function to render each action
   const actionData = useMemo(() => {
-    return gameActions.filter(action =>
-      actionsDescriptions[sport].hasOwnProperty(action.action_type)
-    );
+    // Acciones no estan definidas para este deporte
+
+    try {
+      return gameActions.filter(action =>
+        actionsDescriptions[sport].hasOwnProperty(action.action_type)
+      );
+    } catch (error) {
+      console.log(
+        `Game actions are no defined for the following sport: '${sport}'`
+      );
+    }
   }, [gameActions]);
 
   const renderItem = ({ item }) => {
@@ -77,6 +86,7 @@ const GameActions = ({
   return (
     <FlatList
       data={actionData}
+      style={depth1}
       keyExtractor={item => item.id.toString()}
       renderItem={renderItem}
       ItemSeparatorComponent={() => <View style={styles.divider} />}
@@ -142,6 +152,28 @@ const actionsDescriptions = {
     Blocks: 'Bloqueo',
     Turnover: 'Pérdida de balón',
     Foul: 'Falta',
+  },
+  Beisbol: {
+    AtBat: 'Al Bate',
+    Run: 'Carrera',
+    Hit: 'Hit',
+    RunBattedIn: 'Carrera empujada',
+    BaseOnBall: 'Base por bola',
+    StrikeOut: 'Ponche',
+    LeftOnBase: 'Dejado en base',
+    Homerun: 'Cuadrangular',
+    Out: 'Out',
+  },
+  Softbol: {
+    AtBat: 'Al Bate',
+    Run: 'Carrera',
+    Hit: 'Hit',
+    RunBattedIn: 'Carrera empujada',
+    BaseOnBall: 'Base por bola',
+    StrikeOut: 'Ponche',
+    LeftOnBase: 'Dejado en base',
+    Homerun: 'Cuadrangular',
+    Out: 'Out',
   },
 };
 export default GameActions;

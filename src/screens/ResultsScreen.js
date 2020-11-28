@@ -13,8 +13,7 @@ import {
 } from 'react-native';
 import CalendarStrip from 'react-native-calendar-strip';
 import ResultCard from '_components/ResultCard';
-
-import { Colors } from '_styles';
+import { Colors, Elevations } from '_styles';
 
 // When Calendar changes date we need to filter the events to be displayed
 const filterByDate = (eventsArr, date) => {
@@ -115,10 +114,12 @@ const ResultsScreen = ({ navigation }) => {
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          navigation.navigate('Event', {
+          const destination = item.hasPBP ? 'PBP' : 'Event';
+          navigation.navigate(destination, {
             title: eventTitle,
             eventId: item.id,
             sport: item.sport_name,
+            isLocal: item.is_local,
             uprmName,
             oppName,
           });
@@ -136,20 +137,26 @@ const ResultsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CalendarStrip
-        scrollable
-        ref={calendarRef}
-        locale={locale_es}
-        markedDates={markedDates}
-        style={{ height: 85, paddingTop: 10, paddingBottom: 10 }}
-        calendarColor={'white'}
-        calendarHeaderStyle={{ color: 'black', fontSize: 12, marginBottom: 10 }}
-        dateNumberStyle={{ color: 'gray', fontSize: 14 }}
-        dateNameStyle={{ color: 'gray' }}
-        onDateSelected={setSelectedDate}
-        leftSelector={[]}
-        rightSelector={[]}
-      />
+      <View style={Elevations.depth2}>
+        <CalendarStrip
+          scrollable
+          ref={calendarRef}
+          locale={locale_es}
+          markedDates={markedDates}
+          style={{ height: 85, paddingTop: 10, paddingBottom: 10 }}
+          calendarColor={'white'}
+          calendarHeaderStyle={{
+            color: 'black',
+            fontSize: 12,
+            marginBottom: 10,
+          }}
+          dateNumberStyle={{ color: 'gray', fontSize: 14 }}
+          dateNameStyle={{ color: 'gray' }}
+          onDateSelected={setSelectedDate}
+          leftSelector={[]}
+          rightSelector={[]}
+        />
+      </View>
 
       <FlatList
         data={filteredEvents}

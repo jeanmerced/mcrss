@@ -6,15 +6,16 @@ import {
 } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { StatusBar } from 'react-native';
-import { Colors } from '_styles/';
+import { Colors, Elevations } from '_styles/';
 import HomeScreen from '_screens/HomeScreen';
 import MediaScreen from '_screens/MediaScreen';
 import SportsScreen from '_screens/SportsScreen';
 import SportsStack from '_navigation/SportsStack';
 import AboutScreen from '_screens/AboutScreen';
+import PBPScreen from '_screens/PBPScreen';
 import EventScreen from '_screens/EventScreen';
 import ResultsScreen from '_screens/ResultsScreen';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,14 +37,40 @@ const getHeaderTitle = route => {
     Media: 'Media',
     Results: 'Resultados',
     Sports: 'Deportes',
-    About: 'Huella',
+    About: 'Huella Deportiva',
   };
 
   return screenTitles[routeName];
 };
 
 const HomeTabs = () => (
-  <Tab.Navigator initialRouteName="Home" tabBarOptions={tabBarOptions}>
+  <Tab.Navigator
+    initialRouteName="Home"
+    tabBarOptions={tabBarOptions}
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+        switch (route.name) {
+          case 'Home':
+            iconName = 'home';
+            break;
+          case 'Media':
+            iconName = 'tv';
+            break;
+          case 'Results':
+            iconName = 'table';
+            break;
+          case 'Sports':
+            iconName = 'basketball-ball';
+            break;
+          case 'About':
+            iconName = 'paw';
+            break;
+        }
+        return <FontAwesome5 name={iconName} size={size} color={color} />;
+      },
+    })}
+  >
     <Tab.Screen
       name="Home"
       component={HomeScreen}
@@ -63,7 +90,7 @@ const HomeTabs = () => (
     <Tab.Screen
       name="About"
       component={AboutScreen}
-      options={{ title: 'About' }}
+      options={{ title: 'Huella' }}
     />
   </Tab.Navigator>
 );
@@ -78,6 +105,11 @@ const AppNavigator = () => (
           options={({ route }) => ({ headerTitle: getHeaderTitle(route) })}
         />
         <Stack.Screen
+          name="PBP"
+          component={PBPScreen}
+          options={({ route }) => ({ headerTitle: route.params.title })}
+        />
+        <Stack.Screen
           name="Event"
           component={EventScreen}
           options={({ route }) => ({ headerTitle: route.params.title })}
@@ -88,13 +120,13 @@ const AppNavigator = () => (
 );
 
 const tabBarOptions = {
-  activeTintColor: '#ffffff',
-  inactiveTintColor: '#d0ced1',
+  activeTintColor: '#1B7744',
   labelStyle: {
-    fontSize: 12,
+    fontSize: 10,
   },
   style: {
-    backgroundColor: '#1B7744',
+    backgroundColor: '#F6F6F6',
+    ...Elevations.depth2,
   },
 };
 
