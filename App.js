@@ -1,7 +1,10 @@
-//@refresh reset
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
 import AppNavigator from '_navigation/AppNavigator';
-import HomeScreen from '_screens/HomeScreen'
+
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
 
 const App = () => <AppNavigator />;
+
 export default App;

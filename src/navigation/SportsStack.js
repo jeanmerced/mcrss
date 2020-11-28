@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ResultsScreen from '_screens/ResultsScreen';
-import EventScreen from '_screens/EventScreen';
+import SportsScreen from '_screens/SportsScreen';
+import TeamInfo from '_screens/TeamInfo';
 import { Colors } from '_styles/';
 
 const Stack = createStackNavigator();
 
-const ResultsStack = () => {
+const SportsStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Results" screenOptions={screenOptions}>
+    <Stack.Navigator initialRouteName="Sports" screenOptions={screenOptions}>
       <Stack.Screen
-        name="Results"
-        component={ResultsScreen}
-        options={{ title: 'Resultados' }}
+        name="Sports"
+        component={SportsScreen}
+        options={{ title: 'Deportes' }}
       />
       <Stack.Screen
-        name="Event"
-        component={EventScreen}
-        options={({ route }) => ({ title: route.params.title })}
+        name="Sports Info"
+        component={TeamInfo}
+        options={{ title: 'Equipo' }}
       />
     </Stack.Navigator>
   );
@@ -34,4 +34,4 @@ const screenOptions = {
   headerBackTitleVisible: false,
 };
 
-export default ResultsStack;
+export default SportsStack;
