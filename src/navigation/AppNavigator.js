@@ -10,6 +10,7 @@ import { Colors, Elevations } from '_styles/';
 import HomeScreen from '_screens/HomeScreen';
 import MediaScreen from '_screens/MediaScreen';
 import SportsScreen from '_screens/SportsScreen';
+import SportsStack from '_navigation/SportsStack';
 import AboutScreen from '_screens/AboutScreen';
 import PBPScreen from '_screens/PBPScreen';
 import EventScreen from '_screens/EventScreen';
@@ -83,7 +84,7 @@ const HomeTabs = () => (
     />
     <Tab.Screen
       name="Sports"
-      component={SportsScreen}
+      component={SportsStack}
       options={{ title: 'Deportes' }}
     />
     <Tab.Screen
