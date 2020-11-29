@@ -59,13 +59,13 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
     // Add Stats to every athlete
     Object.entries(roster ?? {}).forEach(([key, value]) => {
       // Merge athlete info with sport stats
-      teamRoster[key] = { ...value, ...sportsStats[sport] };
+      teamRoster[key] = { ...value, ...athleteStats[sport] };
     });
     // Put in a single object for easier look up
     // All stats has 3 levels Rosters - Athletes - Stats
     for (const action of gameActions) {
       if (action.team == team) {
-        if (sportsStats[sport].hasOwnProperty(action.action_type)) {
+        if (athleteStats[sport].hasOwnProperty(action.action_type)) {
           const athleteId = `athlete-${action.athlete_id}`;
           const actionType = action.action_type;
           // Check if athlete is in roster
@@ -116,11 +116,12 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
   const formatColumn = ({ item }) => {
     // value is the athlete with the stats
     // in the map key is athlete id and  and value athlete info and stats
+
     const col = Object.entries(stats).map(([key, value]) => {
       let statsVal = 0;
       // For the sport of basketball when Miss stats come up we take that slot
       // to show percentage
-      switch (item) {
+      switch (item.stat) {
         case '2PointsMiss':
           statsVal = getPercentage(value['2Points'], value['2PointsAttempts']);
           break;
@@ -137,11 +138,11 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
           break;
 
         default:
-          statsVal = value[item];
+          statsVal = value[item.stat];
           break;
       }
       return (
-        <View key={`${item}-${key}`} style={styles.cell}>
+        <View key={`${item.stat}-${key}`} style={styles.cell}>
           <Text style={styles.cellText}>{statsVal}</Text>
         </View>
       );
@@ -181,9 +182,14 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
         scrollEventThrottle={16}
       >
         {/* Abbreviations for stats*/}
-        {statsAbbreviation[sport].map(abbr => (
-          <View key={`header-${abbr}`} style={[styles.cell, { height: 30 }]}>
-            <Text style={[styles.cellText, styles.headerText]}>{abbr}</Text>
+        {sportStats[sport].map(sport => (
+          <View
+            key={`header-${sport.header}`}
+            style={[styles.cell, { height: 30 }]}
+          >
+            <Text style={[styles.cellText, styles.headerText]}>
+              {sport.header}
+            </Text>
           </View>
         ))}
       </ScrollView>
@@ -196,10 +202,11 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
       <FlatList
         horizontal
         style={{ marginLeft: FIRST_COL_WIDTH }}
-        data={Object.keys(sportsStats[sport])}
-        keyExtractor={item => `${team}-${item}`}
+        data={sportStats[sport]}
+        keyExtractor={item => `${team}-${item.stat}`}
         renderItem={formatColumn}
         stickyHeaderIndices={[0]}
+        scrollEventThrottle={16}
         onScroll={scrollEvent}
       />
     </View>
@@ -260,7 +267,7 @@ const styles = StyleSheet.create({
 });
 
 // Sports statistics need to be define in the same order as their abbreviation
-const sportsStats = {
+const athleteStats = {
   Voleibol: {
     KillPoint: 0,
     AttackError: 0,
@@ -322,65 +329,65 @@ const sportsStats = {
   },
 };
 
-const statsAbbreviation = {
+const sportStats = {
   Voleibol: [
-    'K', // KillPoints
-    'E', // AttackErrors
-    'ACE', // Ace
-    'SE', // Service Errors
-    'AST', // Assists
-    'DIG', // Digs
-    'RE', // Reception Errors
-    'BS', // Blocks
-    'BP', // Block Points
-    'BE', // Bloking Error
+    { stat: 'KillPoint', header: 'K' }, // KillPoints
+    { stat: 'AttackError', header: 'E' }, // AttackErrors
+    { stat: 'Ace', header: 'ACE' }, // Ace
+    { stat: 'ServiceError', header: 'SE' }, // Service Errors
+    { stat: 'Assist', header: 'AST' }, // Assists
+    { stat: 'Dig', header: 'DIG' }, // Digs
+    { stat: 'ReceptionError', header: 'RE' }, // Reception Errors
+    { stat: 'Block', header: 'BS' }, // Blocks
+    { stat: 'BlockPoint', header: 'BP' }, // Block Points
+    { stat: 'BlockingError', header: 'BE' }, // Bloking Error
   ],
   Futbol: [
-    'G', // Goals
-    'SH', // GoalAttempt
-    'AST', // Assits
-    'S', // Tackle
-    'F', // Foul
-    'YC', // YellowCard
-    'RC', // RecCard
+    { stat: 'Goal', header: 'G' }, // Goals
+    { stat: 'GoalAttempt', header: 'SH' }, // GoalAttempt
+    { stat: 'Assist', header: 'AST' }, // Assits
+    { stat: 'Tackle', header: 'S' }, // Tackle
+    { stat: 'Foul', header: 'F' }, // Foul
+    { stat: 'YellowCard', header: 'YC' }, // Yellow Cards
+    { stat: 'RedCard', header: 'RC' }, // Yellow Cards
   ],
   Baloncesto: [
-    'PTS', // Points
-    'FGM', // 2Points
-    'FGA', // 2Points Attempt
-    'FG%', // Field Percentage (will take the place of 2PointsMiss)
-    '3PM', // 3Points
-    '3PA', // 3Points Attempt
-    '3P%', // 3Points Percentage (will take the place of 3PointsMiss)
-    'FTM', // Freethrow
-    'FTA', // Freethrow Attemp
-    'FT%', // Freethrow Percentage (will take the place of FreethrowMiss)
-    'AST', // Assist
-    'REB', // Rebound
-    'STL', // Steals
-    'BLK', // Blocks
-    'TOV', // Turnover
-    'PF', // Foul
+    { stat: 'Points', header: 'PTS' }, // Points
+    { stat: '2Points', header: 'FGM' }, // 2Points
+    { stat: '2PointsAttempts', header: 'FGA' }, // 2Points Attempt
+    { stat: '2PointsMiss', header: 'FG%' }, // Field Percentage (will take the place of 2PointsMiss)
+    { stat: '3Points', header: '3PM' }, // 3Points
+    { stat: '3PointsAttempts', header: '3PA' }, // 3Points Attempt
+    { stat: '3PointsMiss', header: '3P%' }, // 3Points Percentage (will take the place of 3PointsMiss)
+    { stat: 'Freethrow', header: 'FTM' }, // Freethrow
+    { stat: 'FreethrowAttempts', header: 'FTA' }, // Freethrow Attemp
+    { stat: 'FreethrowMiss', header: 'FT%' }, // Freethrow Percentage (will take the place of FreethrowMiss)
+    { stat: 'Assist', header: 'AST' }, // Assist
+    { stat: 'Rebound', header: 'REB' }, // Rebound
+    { stat: 'Steals', header: 'STL' }, // Steals
+    { stat: 'Blocks', header: 'BLK' }, // Blocks
+    { stat: 'Turnover', header: 'TOV' }, // Turnover
+    { stat: 'Foul', header: 'PF' }, // Personal Foul
   ],
   Beisbol: [
-    'AB', // At Bat
-    'R', // Run
-    'H', // Hit
-    'HR', // Homerun
-    'RBI', // RunsBattedIn
-    'BB', // BaseOnBall
-    'SO', // StrikeOut
-    'LOB', // LeftOnBase
+    { stat: 'AtBat', header: 'AB' }, // At Bat
+    { stat: 'Run', header: 'R' }, // Run
+    { stat: 'Hit', header: 'H' }, // Hit
+    { stat: 'Homerun', header: 'HR' }, // Homerun
+    { stat: 'RunBattedIn', header: 'RBI' }, // RunsBattedIn
+    { stat: 'BaseOnBall', header: 'BB' }, // BaseOnBall
+    { stat: 'StrikeOut', header: 'SO' }, // StrikeOut
+    { stat: 'LeftOnBase', header: 'LOB' }, // LeftOnBase
   ],
   Softbol: [
-    'AB', // At Bat
-    'R', // Run
-    'H', // Hit
-    'HR', // Homerun
-    'RBI', // RunsBattedIn
-    'BB', // BaseOnBall
-    'SO', // StrikeOut
-    'LOB', // LeftOnBase
+    { stat: 'AtBat', header: 'AB' }, // At Bat
+    { stat: 'Run', header: 'R' }, // Run
+    { stat: 'Hit', header: 'H' }, // Hit
+    { stat: 'Homerun', header: 'HR' }, // Homerun
+    { stat: 'RunBattedIn', header: 'RBI' }, // RunsBattedIn
+    { stat: 'BaseOnBall', header: 'BB' }, // BaseOnBall
+    { stat: 'StrikeOut', header: 'SO' }, // StrikeOut
+    { stat: 'LeftOnBase', header: 'LOB' }, // LeftOnBase
   ],
 };
 
