@@ -10,11 +10,49 @@ import {
 } from 'react-native';
 import { Colors, Elevations } from '_styles';
 
+const isMedalBased = sport => {
+  switch (sport) {
+    case 'Atletismo':
+    case 'Campo Traviesa':
+    case 'Halterofilia':
+    case 'Judo':
+    case 'Lucha Olímpica':
+    case 'Natación':
+    case 'Taekwondo':
+    case 'Baile':
+    case 'Porrismo':
+      return true;
+    default:
+      return false;
+  }
+};
+
+const isMatchBased = sport => {
+  switch (sport) {
+    case 'Tenis de Campo':
+    case 'Tenis de Mesa':
+      return true;
+    default:
+      return false;
+  }
+};
+
+const getSportType = sport => {
+  if (isMedalBased(sport)) {
+    return 'MedalBased';
+  } else if (isMatchBased(sport)) {
+    return 'MatchBased';
+  } else {
+    return sport;
+  }
+};
+
 // sport: which sport for the stats
 // gameActions: all game actions from firebase
 // team: either uprm or opponent
 // roster: team roster from firebase
 const Table = ({ sport, athleteStatistics }) => {
+  const selectedSport = getSportType(sport);
   // Sync header scroll with list scroll
   const headerScrollView = useRef(null);
   const scrollPosition = useRef(new Animated.Value(0));
@@ -69,7 +107,7 @@ const Table = ({ sport, athleteStatistics }) => {
         scrollEventThrottle={16}
       >
         {/* Abbreviations for stats*/}
-        {statsAbbreviation[sport].map(abbr => (
+        {statsAbbreviation[selectedSport].map(abbr => (
           <View key={`header-${abbr}`} style={[styles.cell, { height: 30 }]}>
             <Text style={[styles.cellText, styles.headerText]}>{abbr}</Text>
           </View>
@@ -106,10 +144,11 @@ const Table = ({ sport, athleteStatistics }) => {
       <FlatList
         horizontal
         style={{ marginLeft: FIRST_COL_WIDTH }}
-        data={sportsStats[sport]}
+        data={sportsStats[selectedSport]}
         keyExtractor={item => item.toString()}
         renderItem={formatColumn}
         stickyHeaderIndices={[0]}
+        scrollEventThrottle={16}
         onScroll={scrollEvent}
       />
     </View>
@@ -160,9 +199,10 @@ const styles = StyleSheet.create({
   },
   cell: {
     height: ROW_HEIGHT,
-    width: COL_WIDTH,
+    minWidth: COL_WIDTH,
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 5,
   },
   cellText: {
     fontSize: 13,
@@ -183,53 +223,51 @@ const sportsStats = {
     'blocking_points',
     'blocking_errors',
   ],
-  Futbol: {
-    Goal: 0,
-    GoalAttempt: 0,
-    Assist: 0,
-    Tackle: 0,
-    Foul: 0,
-    YellowCard: 0,
-    RedCard: 0,
-  },
-  Baloncesto: {
-    Points: 0,
-    '2Points': 0,
-    '2PointsAttempts': 0,
-    '2PointsMiss': 0, //
-    '3Points': 0,
-    '3PointsAttempts': 0,
-    '3PointsMiss': 0,
-    Freethrow: 0,
-    FreethrowAttempts: 0,
-    FreethrowMiss: 0,
-    Assist: 0,
-    Rebound: 0,
-    Steals: 0,
-    Blocks: 0,
-    Turnover: 0,
-    Foul: 0,
-  },
-  Beisbol: {
-    AtBat: 0,
-    Run: 0,
-    Hit: 0,
-    Homerun: 0,
-    RunBattedIn: 0,
-    BaseOnBall: 0,
-    StrikeOut: 0,
-    LeftOnBase: 0,
-  },
-  Softbol: {
-    AtBat: 0,
-    Run: 0,
-    Hit: 0,
-    Homerun: 0,
-    RunBattedIn: 0,
-    BaseOnBall: 0,
-    StrikeOut: 0,
-    LeftOnBase: 0,
-  },
+  Futbol: [
+    'successful_goals',
+    'goal_attempts',
+    'assists',
+    'tackles',
+    'fouls',
+    'cards',
+  ],
+  Baloncesto: [
+    'points',
+    'successful_field_goal',
+    'field_goal_attempt',
+    'field_goal_percentage',
+    'successful_three_point',
+    'three_point_attempt',
+    'three_point_percentage',
+    'successful_free_throw',
+    'free_throw_attempt',
+    'free_throw_percentage',
+    'assists',
+    'rebounds',
+    'steals',
+    'blocks',
+    'turnovers',
+  ],
+  Beisbol: [
+    'at_bats',
+    'runs',
+    'hits',
+    'runs_batted_in',
+    'base_on_balls',
+    'strikeouts',
+    'left_on_base',
+  ],
+  Softbol: [
+    'at_bats',
+    'runs',
+    'hits',
+    'runs_batted_in',
+    'base_on_balls',
+    'strikeouts',
+    'left_on_base',
+  ],
+  MedalBased: ['category_name', 'medal_earned'],
+  MatchBased: ['category_name', 'matches_played', 'matches_won'],
 };
 
 const statsAbbreviation = {
@@ -251,8 +289,7 @@ const statsAbbreviation = {
     'AST', // Assits
     'S', // Tackle
     'F', // Foul
-    'YC', // YellowCard
-    'RC', // RecCard
+    'C', // Cards
   ],
   Baloncesto: [
     'PTS', // Points
@@ -270,13 +307,11 @@ const statsAbbreviation = {
     'STL', // Steals
     'BLK', // Blocks
     'TOV', // Turnover
-    'PF', // Foul
   ],
   Beisbol: [
     'AB', // At Bat
     'R', // Run
     'H', // Hit
-    'HR', // Homerun
     'RBI', // RunsBattedIn
     'BB', // BaseOnBall
     'SO', // StrikeOut
@@ -286,36 +321,13 @@ const statsAbbreviation = {
     'AB', // At Bat
     'R', // Run
     'H', // Hit
-    'HR', // Homerun
     'RBI', // RunsBattedIn
     'BB', // BaseOnBall
     'SO', // StrikeOut
     'LOB', // LeftOnBase
   ],
-};
-
-const statsDescriptions = {
-  Voleibol: {
-    KillPoint: 'Puntos de Ataque',
-    AttackError: 'Errores de Ataque',
-    Assist: 'Asistencias',
-    Ace: 'Servicios Directos',
-    ServiceError: 'Errores de Servicio',
-    Dig: 'Recepciones',
-    Block: 'Bloqueos',
-    BlockPoint: 'Puntos de Bloqueo',
-    BlockingError: 'Errores de Bloqueo',
-    ReceptionError: 'Errores de Recepción',
-  },
-  Futbol: {
-    Goal: 'Goles',
-    GoalAttempt: 'Tiros a portería',
-    Assist: 'Asistencias',
-    Tackle: 'Atajadas',
-    Foul: 'Faltas',
-    YellowCard: 'Tarjetas amarillas',
-    RedCard: 'Tarjetas rojas',
-  },
+  MedalBased: ['Categoría', 'Tipo de Medalla'],
+  MatchBased: ['Categoría', 'Partidas Jugadas', 'Partidas Ganadas'],
 };
 
 export default Table;
