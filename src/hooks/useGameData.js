@@ -19,7 +19,7 @@ const useGameData = eventId => {
         const metadata = snapshot.val();
         setGameData({
           currentSet: metadata['current-set'],
-          gameIsOver: metadata['game-over'].answer == 'No',
+          gameIsOver: metadata['game-over'].answer == 'Yes',
           opponentColor: metadata['opp-color'],
           sport: metadata['sport'],
         });
