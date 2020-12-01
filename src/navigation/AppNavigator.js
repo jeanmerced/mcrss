@@ -9,8 +9,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Colors, Elevations } from '_styles/';
 import HomeScreen from '_screens/HomeScreen';
 import MediaScreen from '_screens/MediaScreen';
-import SportsScreen from '_screens/SportsScreen';
-import TeamInfo from '_screens/TeamInfo';
+import ArticleScreen from '_screens/ArticleScreen';
+
+import SportsStack from '_navigation/SportsStack';
 import AboutScreen from '_screens/AboutScreen';
 import PBPScreen from '_screens/PBPScreen';
 import EventScreen from '_screens/EventScreen';
@@ -41,6 +42,16 @@ const getHeaderTitle = route => {
   };
 
   return screenTitles[routeName];
+};
+
+const showHeader = route => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
+  switch (routeName) {
+    case 'Sports':
+      return false;
+    default:
+      return true;
+  }
 };
 
 const HomeTabs = () => (
@@ -76,7 +87,11 @@ const HomeTabs = () => (
       component={HomeScreen}
       options={{ title: 'Inicio' }}
     />
-    <Tab.Screen name="Media" component={MediaScreen} />
+    <Tab.Screen
+      name="Media"
+      component={MediaScreen}
+      options={{ title: 'Media' }}
+    />
     <Tab.Screen
       name="Results"
       component={ResultsScreen}
@@ -84,7 +99,7 @@ const HomeTabs = () => (
     />
     <Tab.Screen
       name="Sports"
-      component={SportsScreen}
+      component={SportsStack}
       options={{ title: 'Deportes' }}
     />
     <Tab.Screen
@@ -102,7 +117,10 @@ const AppNavigator = () => (
         <Stack.Screen
           name="Home"
           component={HomeTabs}
-          options={({ route }) => ({ headerTitle: getHeaderTitle(route) })}
+          options={({ route }) => ({
+            headerTitle: getHeaderTitle(route),
+            headerShown: showHeader(route),
+          })}
         />
         <Stack.Screen
           name="PBP"
@@ -115,9 +133,9 @@ const AppNavigator = () => (
           options={({ route }) => ({ headerTitle: route.params.title })}
         />
         <Stack.Screen
-          name="Sports Info"
-          component={TeamInfo}
-          options={{ title: 'Equipo' }}
+          name="Article"
+          component={ArticleScreen}
+          options={{ title: 'Artículo' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -131,7 +149,6 @@ const tabBarOptions = {
   },
   style: {
     backgroundColor: '#F6F6F6',
-    ...Elevations.depth2,
   },
 };
 
