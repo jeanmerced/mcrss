@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
-  View,
-  Text,
+  ScrollView,
   SafeAreaView,
   StatusBar,
   Dimensions,
@@ -45,7 +44,7 @@ const PBPScreen = ({ route }) => {
     switch (route.key) {
       case 'teams':
         return (
-          <View style={{ flex: 1 }}>
+          <ScrollView>
             <ScoreBox
               sport={sport}
               isLocal={isLocal}
@@ -60,7 +59,7 @@ const PBPScreen = ({ route }) => {
               opponentName={oppName}
               gameActions={gameActions}
             />
-          </View>
+          </ScrollView>
         );
       case 'pbp':
         return (
@@ -103,6 +102,7 @@ const PBPScreen = ({ route }) => {
       <StatusBar barStyle={'light-content'} />
       <Scoreboard
         sport={sport}
+        isLocal={isLocal}
         uprmName={uprmName}
         opponentName={oppName}
         partialScores={partialScores}
