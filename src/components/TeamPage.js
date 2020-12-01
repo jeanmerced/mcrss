@@ -27,7 +27,7 @@ import Icon from 'react-native-vector-icons/Feather';
 
 
 const buildYearList = () => {
-    let yearFirst = 2020;
+    let yearFirst = 2019;
     const currentYear = new Date(Date.now()).getFullYear();
     const yearList = [];
     while(yearFirst <= currentYear)
@@ -121,12 +121,12 @@ const renderScene = ({ route }) => {
     switch (route.key) {
         case 'description':
           return (
-            <View>
+            <View style={styles.container}>
             { team.length==0 ? (
             <ActivityIndicator size="large" />
             ) : ( 
 
-              <View  style={styles.container}>
+              <View  >
                  { team.team_info.team_image_url=='' ? (
                
                   <Avatar
@@ -239,7 +239,7 @@ const renderScene = ({ route }) => {
       <View style={{ flex: 0,flexDirection: 'row',padding:10}}>
       <Text h4 style={{width:'50%',textAlign:'center'}}>Temporada</Text>
       <DropDownPicker
-            items={yearList.map(year => ({label: year.season_year.toString(), value: Year, icon: () => <Icon name="calendar" size={25}  /> }))
+            items={yearList.map(year => ({label: year.season_year.toString(), value: year.season_year.toString(), icon: () => <Icon name="calendar" size={25}  /> }))
         
             }
             defaultValue={Year}
@@ -252,7 +252,8 @@ const renderScene = ({ route }) => {
             onChangeItem={ item=> setYear(item.value) }
         />
       </View>
-      <TabView
+      <TabView 
+        style={{zIndex:-1}}
         renderTabBar={renderTabBar}
         navigationState={{ index, routes }}
         renderScene={renderScene}

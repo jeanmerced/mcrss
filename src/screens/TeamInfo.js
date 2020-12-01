@@ -14,7 +14,7 @@ import AthletePage from '_components/AthletePage';
 import { Colors } from '_styles';
 
 
-const TeamInfo = ({ route }) => {
+const TeamInfo = ({ route ,navigation}) => {
     const { sportId, branch, title } = route.params;
     
     

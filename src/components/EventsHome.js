@@ -8,7 +8,7 @@ const imageUrl = 'https://white-smile-272204.ue.r.appspot.com/events'
 
 let {width,height} = Dimensions.get('window');
 
-height=height/3;
+height=height/2.7;
 
 width= width/2
 
@@ -25,7 +25,7 @@ class EventHome extends Component {
           
           //'data' field in the response has the pics[]
           this.setState({pics:res.data.Events});
-          this.setState({last:res.data.Events.slice(-2)});
+          this.setState({last:res.data.Events.slice(-4)});
           this.setState({ isLoading: false });
 
         })
@@ -57,31 +57,71 @@ class EventHome extends Component {
           ) : ( 
               <ScrollView horizontal={true} alwaysBounceHorizontal Style={styles.container} >
                 
-                <Card containerStyle={styles.shadow,this.state.size } image={{uri:images[0]}}>
+                <Card  containerStyle={[this.state.size,{padding:0}]}  >
+                <Card.Image source={{uri:images[0]}}/>
+          
                 <TouchableOpacity>
-                  <Text style={{fontWeight:'bold',textAlign:'left'}}>
+                
+                <Text style={{fontWeight:'bold',textAlign:'left',margin:5}}>
                       {branch[0]} vs  {opp[0]}
                   </Text>
-                  <Text style={{textAlign:'left'}}>
+                  <Text style={{textAlign:'left',margin:5}}>
                       {sport[0]} {spb[0]}
                   </Text>
-                  <Text style={{textAlign:'left'}}>
+                  <Text style={{textAlign:'left',margin:5}}>
                       {date[0]}
                   </Text>
                   </TouchableOpacity>
                 </Card>
                 
                 
-                <Card containerStyle={this.state.size} image={{uri:images[1]}}>
+                <Card  containerStyle={[this.state.size,{padding:0}]}  >
+                <Card.Image source={{uri:images[1]}}/>
+          
                 <TouchableOpacity>
-                <Text style={{fontWeight:'bold',textAlign:'left'}}>
+                
+                <Text style={{fontWeight:'bold',textAlign:'left',margin:5}}>
                       {branch[1]} vs  {opp[1]}
                   </Text>
-                  <Text style={{textAlign:'left'}}>
+                  <Text style={{textAlign:'left',margin:5}}>
                       {sport[1]} {spb[1]}
                   </Text>
-                  <Text style={{textAlign:'left'}}>
+                  <Text style={{textAlign:'left',margin:5}}>
                       {date[1]}
+                  </Text>
+                  </TouchableOpacity>
+                </Card>
+
+                <Card  containerStyle={[this.state.size,{padding:0}]}  >
+                <Card.Image source={{uri:images[2]}}/>
+          
+                <TouchableOpacity>
+                
+                <Text style={{fontWeight:'bold',textAlign:'left',margin:5}}>
+                      {branch[2]} vs  {opp[2]}
+                  </Text>
+                  <Text style={{textAlign:'left',margin:5}}>
+                      {sport[2]} {spb[2]}
+                  </Text>
+                  <Text style={{textAlign:'left',margin:5}}>
+                      {date[2]}
+                  </Text>
+                  </TouchableOpacity>
+                </Card>
+
+                <Card  containerStyle={[this.state.size,{padding:0}]}  >
+                <Card.Image source={{uri:images[3]}}/>
+          
+                <TouchableOpacity>
+                
+                <Text style={{fontWeight:'bold',textAlign:'left',margin:5}}>
+                      {branch[3]} vs  {opp[3]}
+                  </Text>
+                  <Text style={{textAlign:'left',margin:5}}>
+                      {sport[3]} {spb[3]}
+                  </Text>
+                  <Text style={{textAlign:'left',margin:5}}>
+                      {date[3]}
                   </Text>
                   </TouchableOpacity>
                 </Card>
@@ -113,9 +153,7 @@ class EventHome extends Component {
         
       
     },
-    container: {
-      flex: 1,
-    },
+    
   });
   
 
