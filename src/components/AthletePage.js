@@ -19,18 +19,23 @@ import {
     Divider
   } from 'react-native-elements';
 import axios from 'axios';
-import { TabView, TabBar } from 'react-native-tab-view';
 import { Colors } from '_styles';
-import DropDownPicker from 'react-native-dropdown-picker';
-import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 
 
-const AthletePage = ( props) => {
+
+
+
+const AthletePage = ({sport,sportId,branch}) => {
+const navigation = useNavigation();
+
+
 
 const [athlete,setAthlete] = useState([]);
 
 const renderItem = ({ item }) => {
+    
     return (
        
         
@@ -50,7 +55,14 @@ const renderItem = ({ item }) => {
              containerStyle={{margin:10}}
              source={{ uri: item.profilePicLink}}
               PlaceholderContent={<ActivityIndicator/>}/>)}
-        <TouchableOpacity>
+        <TouchableOpacity
+        
+        onPress={() => {
+          navigation.navigate('Athlete Info',{
+          id:item.id,sportname:sport,}
+          );  
+        }}
+        >
         <View>
         <Text h4 style={{padding:10}} >{item.fName} {item.lName} #{item.number}</Text>
         </View>
@@ -88,7 +100,7 @@ const renderItem = ({ item }) => {
         //'data' field in the response has the text[]
         let temp=[];
         res.data.Athletes.map(element => {
-          if(element.sport_id==props.sportId){
+          if(element.sport_id==sportId){
             temp.push(element)
           }
         })
@@ -104,6 +116,7 @@ const renderItem = ({ item }) => {
   useEffect(() => {
     componentDidMount()
   },[])
+
   
  
   return (
@@ -121,8 +134,6 @@ const renderItem = ({ item }) => {
                     ListEmptyComponent={() => (
                        <Text> No hay Atletas</Text>
                     )}
-                    initialNumToRender
-                    maxToRenderPerBatch
                     />
                   </View>   
     

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, Dimensions, StyleSheet } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import axios from 'axios';
-import Table from '_components/Table';
 import { Colors, Elevations } from '_styles';
 
 const url = 'https://white-smile-272204.ue.r.appspot.com/results/';

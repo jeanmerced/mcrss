@@ -40,6 +40,7 @@ class Multimedios extends Component {
 
               <View  style={styles.container}>
                 {images.map((img)=><Image 
+                key={img}
                 containerStyle={{margin:10}}
                 source={{ uri: img }}
                 style={this.state.size}
