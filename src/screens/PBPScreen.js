@@ -22,7 +22,7 @@ import { Colors, Elevations } from '_styles';
 
 const PBPScreen = ({ route }) => {
   const { eventId, sport, isLocal, uprmName, oppName } = route.params;
-  const { gameIsOver, currentSet } = useGameData(eventId);
+  const { gameIsOver, currentSet, opponentColor } = useGameData(eventId);
   const gameActions = useGameActions(eventId, gameIsOver);
   const teamRosters = useTeamRosters(eventId, gameIsOver);
   const partialScores = usePartialScores(eventId);
@@ -70,6 +70,7 @@ const PBPScreen = ({ route }) => {
             teamRosters={teamRosters}
             uprmName={uprmName}
             opponentName={oppName}
+            opponentColor={opponentColor}
           />
         );
       case 'athletes':

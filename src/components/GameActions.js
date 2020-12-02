@@ -31,14 +31,17 @@ const getAthleteInfo = (rosters, team, athleteId) => {
 };
 
 // Action: single action render component
-const Action = ({ action, name, number, teamName }) => (
+const Action = ({ action, name, number, teamName, teamColor }) => (
   <View style={styles.action}>
-    <Text style={styles.actionText}>
-      [{teamName}]<Text style={{ fontWeight: 'bold' }}> {action}</Text>
-    </Text>
-    <Text style={styles.actionText}>
-      #{number} {name}
-    </Text>
+    <View style={[styles.square, { backgroundColor: teamColor }]} />
+    <View sty>
+      <Text style={styles.actionText}>
+        [{teamName}]<Text style={{ fontWeight: 'bold' }}> {action}</Text>
+      </Text>
+      <Text style={styles.actionText}>
+        #{number} {name}
+      </Text>
+    </View>
   </View>
 );
 
@@ -49,6 +52,7 @@ const GameActions = ({
   teamRosters,
   uprmName,
   opponentName,
+  opponentColor,
 }) => {
   // Function to render each action
   const actionData = useMemo(() => {
@@ -68,6 +72,7 @@ const GameActions = ({
   const renderItem = ({ item }) => {
     const actionDesc = getActionDescription(sport, item.action_type);
     const teamName = item.team == 'uprm' ? uprmName : opponentName;
+    const teamColor = item.team == 'uprm' ? '#1B7744' : opponentColor;
     const { athleteName, athleteNumber } = getAthleteInfo(
       teamRosters,
       item.team,
@@ -79,6 +84,7 @@ const GameActions = ({
         name={athleteName}
         number={athleteNumber}
         teamName={teamName}
+        teamColor={teamColor}
       />
     );
   };
@@ -92,7 +98,9 @@ const GameActions = ({
       ItemSeparatorComponent={() => <View style={styles.divider} />}
       contentContainerStyle={{ flexGrow: 1 }}
       ListEmptyComponent={() => (
-        <Text>No hay acciones de juego disponibles</Text>
+        <View style={{ alignSelf: 'center', marginTop: '50%' }}>
+          <Text style={{ fontSize: 18 }}>No hay informacíon de jugadas.</Text>
+        </View>
       )}
     />
   );
@@ -109,14 +117,19 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
   },
   action: {
-    height: 45,
+    flexDirection: 'row',
+    height: 50,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    paddingLeft: 10,
+    alignItems: 'center',
   },
   actionText: {
-    fontSize: 13,
+    fontSize: 14,
     textAlign: 'left',
+  },
+  square: {
+    height: 15,
+    width: 15,
+    marginHorizontal: 10,
   },
 });
 
