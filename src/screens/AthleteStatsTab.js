@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import PBPAthleteStats from '_components/PBPAthleteStats';
+import StatsLegend from '_components/StatsLegend';
 
 const AthleteStatsTab = ({
   sport,
@@ -58,14 +59,17 @@ const AthleteStatsTab = ({
   };
 
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      swipeEnabled={false}
-      renderTabBar={renderTabBar}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: Dimensions.get('window').width }}
-    />
+    <View style={{ flex: 1 }}>
+      <TabView
+        navigationState={{ index, routes }}
+        swipeEnabled={false}
+        renderTabBar={renderTabBar}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: Dimensions.get('window').width }}
+      />
+      <StatsLegend sport={sport} />
+    </View>
   );
 };
 
