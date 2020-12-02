@@ -4,8 +4,10 @@ import {
   StyleSheet,
   Text,
   View,
+  SafeAreaView,
   ScrollView,
   ActivityIndicator,
+  RefreshControl,
   TouchableOpacity,
 } from 'react-native';
 import { Card, Avatar } from 'react-native-elements';
@@ -35,34 +37,34 @@ const About = () => {
     }
   };
 
+  const loadAbout = async () => {
+    setLoading(true);
+    const captain = await axios.get(aboutusCaptainUrl);
+    const hdCaptain = captain.data.AboutUs[0];
+
+    const members = await axios.get(aboutusMembersUrl);
+    const hdMembers = members.data.AboutUs;
+
+    const about = await axios.get(aboutusDescriptionUrl);
+    const hdAbout = about.data.AboutUs[0];
+
+    setLoading(false);
+    setCaptain(hdCaptain);
+    setMembers(hdMembers);
+    setAbout(hdAbout);
+  };
   useEffect(() => {
-    const loadAbout = async () => {
-      setLoading(true);
-      const captain = await axios.get(aboutusCaptainUrl);
-      const hdCaptain = captain.data.AboutUs[0];
-
-      const members = await axios.get(aboutusMembersUrl);
-      const hdMembers = members.data.AboutUs;
-
-      const about = await axios.get(aboutusDescriptionUrl);
-      const hdAbout = about.data.AboutUs[0];
-
-      setLoading(false);
-      setCaptain(hdCaptain);
-      setMembers(hdMembers);
-      setAbout(hdAbout);
-    };
     loadAbout();
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      {loading ? (
-        <ActivityIndicator
-          style={{ alignSelf: 'center', marginTop: '50%' }}
-          size="large"
-        />
-      ) : (
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={loadAbout} />
+        }
+      >
         <View>
           <View style={[styles.about, depth1]}>
             <View style={styles.aboutHeader}>
@@ -132,8 +134,8 @@ const About = () => {
             ))}
           </View>
         </View>
-      )}
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
