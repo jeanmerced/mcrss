@@ -4,6 +4,7 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import axios from 'axios';
 import AthleteStatsTable from '_components/AthleteStatsTable';
 import TeamStatsTable from '_components/TeamStatsTable';
+
 import { Colors, Elevations } from '_styles';
 
 const url = 'https://white-smile-272204.ue.r.appspot.com/results/';

@@ -10,8 +10,8 @@ import { Colors, Elevations } from '_styles/';
 import HomeScreen from '_screens/HomeScreen';
 import MediaScreen from '_screens/MediaScreen';
 import ArticleScreen from '_screens/ArticleScreen';
-
 import SportsStack from '_navigation/SportsStack';
+import AthleteScreen from '_screens/AthleteScreen';
 import AboutScreen from '_screens/AboutScreen';
 import PBPScreen from '_screens/PBPScreen';
 import EventScreen from '_screens/EventScreen';
@@ -136,6 +136,11 @@ const AppNavigator = () => (
           name="Article"
           component={ArticleScreen}
           options={{ title: 'Artículo' }}
+        />
+        <Stack.Screen
+          name="Athlete Info"
+          component={AthleteScreen}
+          options={{ title: 'Atleta' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
