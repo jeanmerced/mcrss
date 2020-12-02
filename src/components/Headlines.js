@@ -20,11 +20,11 @@ const renderItem = ({ item }) => {
   let title = item.title;
   let mid = item.mid;
   return (
-    <View>
+    <View
+      style={{ height: 40, justifyContent: 'center', paddingHorizontal: 5 }}
+    >
       <TouchableOpacity>
-        <Text style={{ padding: 5, marginVertical: 5, fontSize: 13 }}>
-          {title}
-        </Text>
+        <Text>{title}</Text>
       </TouchableOpacity>
     </View>
   );
