@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
-const NewsScreen = ({ route }) => {
+const ArticleScreen = ({ route }) => {
   const { title, content } = route.params;
   return (
     <ScrollView>
@@ -15,6 +15,4 @@ const NewsScreen = ({ route }) => {
   );
 };
 
-export default NewsScreen;
-
-const styles = StyleSheet.create({});
+export default ArticleScreen;
