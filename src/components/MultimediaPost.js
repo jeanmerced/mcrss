@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Avatar, Divider } from 'react-native-elements';
 import YoutubePlayer from '_components/YoutubePlayer';
+import FacebookPlayer from '_components/FacebookPlayer';
 import { depth1 } from '_styles/elevations';
 
 const MAX_CHAR = 477;
@@ -110,6 +111,20 @@ const MultimediaPost = ({
           </View>
         );
         break;
+      case 'livestream':
+        setRenderContent(
+          <View>
+            <FacebookPlayer videoLink={content} />
+            <Divider />
+            <View
+              style={{ marginHorizontal: 10, marginBottom: 10, marginTop: 5 }}
+            >
+              <Text style={{ textAlign: 'justify', fontSize: 15 }}>
+                {title}
+              </Text>
+            </View>
+          </View>
+        );
       default:
         break;
     }
