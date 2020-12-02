@@ -81,7 +81,7 @@ const ResultCard = ({
         </View>
         <View style={{ width: 70, alignItems: 'center', marginHorizontal: 4 }}>
           <Text style={{ fontSize: 16 }}>
-            {hasScore ? 'Final' : moment(eventDate).format('h:mm a')}
+            {hasScore ? 'Final' : moment(eventDate).utc().format('h:mm a')}
           </Text>
         </View>
       </View>
