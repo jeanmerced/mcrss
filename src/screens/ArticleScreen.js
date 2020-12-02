@@ -9,7 +9,7 @@ const NewsScreen = ({ route }) => {
         <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10 }}>
           {title}
         </Text>
-        <Text style={{ textAlign: 'justify', fontSize: 16 }}>{content}</Text>
+        <Text style={{ textAlign: 'justify', fontSize: 17 }}>{content}</Text>
       </View>
     </ScrollView>
   );

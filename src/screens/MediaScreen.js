@@ -63,7 +63,7 @@ const MediaScreen = ({ navigation }) => {
     <MultimediaPost
       title={item.title}
       navigation={navigation}
-      publishedDate={item.publishedDate}
+      publishedDate={item.date_published}
       content={item.content}
       type={item.type}
     />
