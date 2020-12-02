@@ -70,7 +70,7 @@ class SportsTable extends Component {
               style={this.state.size}
               data={this.state.text}
               renderItem={renderItem}
-              keyExtractor={item => item.sport_id}
+              keyExtractor={item => item.sport_id.toString()}
               ItemSeparatorComponent={() => <Divider />}
               ListEmptyComponent={() => <Text> No hay nuevas noticias</Text>}
             />

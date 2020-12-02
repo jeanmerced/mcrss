@@ -5,6 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   StatusBar,
+  View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import axios from 'axios';
@@ -26,6 +27,7 @@ const HomeScreen = ({ navigation }) => {
   const [news, setNews] = useState([]);
   const [events, setEvents] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const loadHome = async () => {
     setLoading(true);
@@ -38,6 +40,7 @@ const HomeScreen = ({ navigation }) => {
     setNews(loadNews.data.Multimedias.slice(-5));
     setEvents(loadEvents.data.Events.slice(-4));
     setVideos(loadVideos.data.Multimedias.slice(-2));
+    setFirstLoad(false);
   };
   useEffect(() => {
     loadHome();
@@ -51,10 +54,19 @@ const HomeScreen = ({ navigation }) => {
           <RefreshControl refreshing={loading} onRefresh={loadHome} />
         }
       >
-        <ImageDisplay images={images} />
-        <Headlines news={news} />
-        <EventHome style={(styles.shadow, { padding: 10 })} events={events} />
-        <Multimedios videos={videos} />
+        {firstLoad ? (
+          <View />
+        ) : (
+          <View>
+            <ImageDisplay images={images} />
+            <Headlines news={news} />
+            <EventHome
+              style={(styles.shadow, { padding: 10 })}
+              events={events}
+            />
+            <Multimedios videos={videos} />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

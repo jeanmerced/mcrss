@@ -6,7 +6,6 @@ import {
   View,
   SafeAreaView,
   ScrollView,
-  ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
@@ -28,6 +27,7 @@ const About = () => {
   const [members, setMembers] = useState([]);
   const [lines, setLines] = useState(() => ABOUT_LINES);
   const [about, setAbout] = useState({});
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const toogleLine = () => {
     if (lines) {
@@ -52,6 +52,7 @@ const About = () => {
     setCaptain(hdCaptain);
     setMembers(hdMembers);
     setAbout(hdAbout);
+    setFirstLoad(false);
   };
   useEffect(() => {
     loadAbout();
@@ -65,75 +66,79 @@ const About = () => {
           <RefreshControl refreshing={loading} onRefresh={loadAbout} />
         }
       >
-        <View>
-          <View style={[styles.about, depth1]}>
-            <View style={styles.aboutHeader}>
-              <Text style={{ fontWeight: 'bold', fontSize: 22 }}>
-                Sobre Nosotros
-              </Text>
-            </View>
-            <View style={styles.aboutBody}>
-              <TouchableOpacity activeOpacity={0.6} onPress={toogleLine}>
-                <Text
-                  style={{ fontSize: 16, textAlign: 'justify' }}
-                  numberOfLines={lines}
-                >
-                  {about.title}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+        {firstLoad ? (
+          <View />
+        ) : (
           <View>
-            <Card>
-              <Card.Title style={{ fontSize: 18 }}>
-                {captain.hdmember}
-              </Card.Title>
-
-              <Avatar
-                rounded
-                size="xlarge"
-                source={{ uri: captain.picture }}
-                containerStyle={{ alignSelf: 'center' }}
-              />
-
-              <Text style={styles.cardText}>
-                <Text style={{ fontWeight: 'bold' }}>Cargo: </Text>
-                {captain.title}
-              </Text>
-              <Text style={styles.cardText}>
-                <Text style={{ fontWeight: 'bold' }}>
-                  Programa de estudio:{' '}
+            <View style={[styles.about, depth1]}>
+              <View style={styles.aboutHeader}>
+                <Text style={{ fontWeight: 'bold', fontSize: 22 }}>
+                  Sobre Nosotros
                 </Text>
-                {captain.major}
-              </Text>
-            </Card>
-            {members.map(member => (
-              <Card key={member.hdid.toString()}>
+              </View>
+              <View style={styles.aboutBody}>
+                <TouchableOpacity activeOpacity={0.6} onPress={toogleLine}>
+                  <Text
+                    style={{ fontSize: 16, textAlign: 'justify' }}
+                    numberOfLines={lines}
+                  >
+                    {about.title}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View>
+              <Card>
                 <Card.Title style={{ fontSize: 18 }}>
-                  {member.hdmember}
+                  {captain.hdmember}
                 </Card.Title>
 
                 <Avatar
                   rounded
                   size="xlarge"
-                  source={{ uri: member.picture }}
+                  source={{ uri: captain.picture }}
                   containerStyle={{ alignSelf: 'center' }}
                 />
 
                 <Text style={styles.cardText}>
                   <Text style={{ fontWeight: 'bold' }}>Cargo: </Text>
-                  {member.title}
+                  {captain.title}
                 </Text>
                 <Text style={styles.cardText}>
                   <Text style={{ fontWeight: 'bold' }}>
                     Programa de estudio:{' '}
                   </Text>
-                  {member.major}
+                  {captain.major}
                 </Text>
               </Card>
-            ))}
+              {members.map(member => (
+                <Card key={member.hdid.toString()}>
+                  <Card.Title style={{ fontSize: 18 }}>
+                    {member.hdmember}
+                  </Card.Title>
+
+                  <Avatar
+                    rounded
+                    size="xlarge"
+                    source={{ uri: member.picture }}
+                    containerStyle={{ alignSelf: 'center' }}
+                  />
+
+                  <Text style={styles.cardText}>
+                    <Text style={{ fontWeight: 'bold' }}>Cargo: </Text>
+                    {member.title}
+                  </Text>
+                  <Text style={styles.cardText}>
+                    <Text style={{ fontWeight: 'bold' }}>
+                      Programa de estudio:{' '}
+                    </Text>
+                    {member.major}
+                  </Text>
+                </Card>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
