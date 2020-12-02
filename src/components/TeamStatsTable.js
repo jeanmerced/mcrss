@@ -51,6 +51,7 @@ const getSportType = sport => {
   }
 };
 
+// Component to render match based team stats
 const MatchBased = statistics => {
   const renderStatRow = ({ item }) => {
     const [key, value] = item;
@@ -71,6 +72,7 @@ const MatchBased = statistics => {
   );
 };
 
+// Component to render medal based team stats
 const MedalBased = statistics => {
   const renderStatRow = ({ item }) => (
     <View style={styles.row}>
@@ -89,6 +91,7 @@ const MedalBased = statistics => {
   );
 };
 
+// Component to render soccer, baseball/softball, basketball and Volleyball team statistics
 const MainSports = (sport, statistics) => {
   const Header = () => (
     <View
@@ -125,21 +128,28 @@ const MainSports = (sport, statistics) => {
     />
   );
 };
-const TeamStatsTable = ({ sport, teamStatistics }) => {
-  const selectedSport = getSportType(sport);
 
-  let renderTable;
-  switch (selectedSport) {
-    case 'MedalBased':
-      renderTable = MedalBased(teamStatistics);
-      break;
-    case 'MatchBased':
-      renderTable = MatchBased(teamStatistics);
-      break;
-    default:
-      renderTable = MainSports(sport, teamStatistics);
-      break;
-  }
+// Team stats table will render tables for stats that come from the relational database
+// When we do a get request to get team statistics for event, the response is different
+// depending on the sport, that why we use three table components to render tables.
+
+const TeamStatsTable = ({ sport, teamStatistics }) => {
+  const [renderTable, setRenderTable] = useState(<View />);
+  useEffect(() => {
+    const selectedSport = getSportType(sport);
+
+    switch (selectedSport) {
+      case 'MedalBased':
+        setRenderTable(MedalBased(teamStatistics));
+        break;
+      case 'MatchBased':
+        setRenderTable(MatchBased(teamStatistics));
+        break;
+      default:
+        setRenderTable(MainSports(sport, teamStatistics));
+        break;
+    }
+  }, [teamStatistics]);
   return renderTable;
 };
 
