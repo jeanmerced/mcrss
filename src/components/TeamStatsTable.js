@@ -53,6 +53,7 @@ const getSportType = sport => {
 
 // Component to render match based team stats
 const MatchBased = statistics => {
+  console.log(statistics);
   const renderStatRow = ({ item }) => {
     const [key, value] = item;
     return (
