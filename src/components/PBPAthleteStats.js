@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Animated,
@@ -218,7 +217,7 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
 
   return (
     <FlatList
-      style={[Elevations.depth1]}
+      style={Elevations.depth1}
       data={[{ key: 'table', render: table }]}
       renderItem={({ item }) => item.render}
       ListHeaderComponent={Header}
@@ -393,31 +392,6 @@ const sportStats = {
     { stat: 'StrikeOut', header: 'SO' }, // StrikeOut
     { stat: 'LeftOnBase', header: 'LOB' }, // LeftOnBase
   ],
-};
-
-const statsDescriptions = {
-  Voleibol: [
-    'K - Puntos de Ataque',
-    'E - Errores de Ataque',
-    'ACE - Servicios Directos',
-    'AST - Asistencias',
-    'SE - Errores de Servicio',
-    'DIG - Recepciones',
-    'RE - Errores de Recepción',
-    'BS - Bloqueos',
-    'BP - Puntos de Bloqueo',
-    'BE - Errores de Bloqueo',
-  ],
-
-  Futbol: {
-    Goal: 'Goles',
-    GoalAttempt: 'Tiros a portería',
-    Assist: 'Asistencias',
-    Tackle: 'Atajadas',
-    Foul: 'Faltas',
-    YellowCard: 'Tarjetas amarillas',
-    RedCard: 'Tarjetas rojas',
-  },
 };
 
 export default PBPAthleteStats;
