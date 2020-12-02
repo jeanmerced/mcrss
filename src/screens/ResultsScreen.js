@@ -165,6 +165,7 @@ const ResultsScreen = ({ navigation }) => {
       <View style={Elevations.depth2}>
         <CalendarStrip
           scrollable
+          calendarAnimation={{ type: 'sequence', duration: 30 }}
           ref={calendarRef}
           locale={locale_es}
           markedDates={markedDates}
@@ -176,7 +177,9 @@ const ResultsScreen = ({ navigation }) => {
             marginBottom: 10,
           }}
           dateNumberStyle={{ color: 'gray', fontSize: 14 }}
-          dateNameStyle={{ color: 'gray' }}
+          dateNameStyle={{ color: 'gray', fontSize: 11 }}
+          highlightDateNumberStyle={{ color: 'black' }}
+          highlightDateNameStyle={{ color: 'black', fontSize: 13 }}
           onDateSelected={setSelectedDate}
           leftSelector={[]}
           rightSelector={[]}
