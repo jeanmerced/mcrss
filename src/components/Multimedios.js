@@ -22,35 +22,14 @@ width = width;
 class Multimedios extends Component {
   state = { isLoading: false, vid: [], size: { width, height } };
 
-  componentDidMount() {
-    this.setState({ isLoading: true });
-    // Fetch sport events
-    axios
-      .get(imageUrl)
-      .then(res => {
-        this.setState({ isLoading: false });
-        //'data' field in the response has the events[]
-        this.setState({ vid: res.data.Multimedias.slice(-20) });
-      })
-      .catch(err => console.log(err));
-  }
-
   render() {
-    let videos = this.state.vid.map(a => a.content);
-
     return (
       <View>
-        {this.state.isLoading ? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <ScrollView>
-            {videos.map(vids => (
-              <View style={{ padding: 10 }}>
-                <YoutubePlayer key={vids} videoLink={vids} />
-              </View>
-            ))}
-          </ScrollView>
-        )}
+        {this.props.videos.map(vid => (
+          <View style={{ padding: 10 }}>
+            <YoutubePlayer key={`video-${vid.mid}`} videoLink={vid.content} />
+          </View>
+        ))}
       </View>
     );
   }
