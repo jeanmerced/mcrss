@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   ActivityIndicator,
-  Text,
   View,
   Dimensions,
   ScrollView,
   ImageBackground,
 } from 'react-native';
-import { Image } from 'react-native-elements';
+import { Text, Image } from 'react-native-elements';
 import axios from 'axios';
 import YoutubePlayer from '_components/YoutubePlayer';
 
@@ -25,8 +24,14 @@ class Multimedios extends Component {
   render() {
     return (
       <View>
+        <Text
+          h4
+          style={{ padding: 10, marginTop: 10, backgroundColor: 'white' }}
+        >
+          Videos
+        </Text>
         {this.props.videos.map(vid => (
-          <View style={{ padding: 10 }}>
+          <View key={`video-${vid.mid}`} style={{ padding: 10 }}>
             <YoutubePlayer key={`video-${vid.mid}`} videoLink={vid.content} />
           </View>
         ))}

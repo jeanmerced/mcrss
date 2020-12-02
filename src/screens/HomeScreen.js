@@ -46,7 +46,6 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={'light-content'} />
-
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={loadHome} />
@@ -54,19 +53,7 @@ const HomeScreen = ({ navigation }) => {
       >
         <ImageDisplay images={images} />
         <Headlines news={news} />
-        <Text
-          h4
-          style={(styles.shadow, { padding: 10, backgroundColor: 'white' })}
-        >
-          Eventos
-        </Text>
         <EventHome style={(styles.shadow, { padding: 10 })} events={events} />
-        <Text
-          h4
-          style={{ padding: 10, marginTop: 10, backgroundColor: 'white' }}
-        >
-          Videos
-        </Text>
         <Multimedios videos={videos} />
       </ScrollView>
     </SafeAreaView>

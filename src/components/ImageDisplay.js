@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Text,
   View,
+  Image,
   Dimensions,
   ImageBackground,
 } from 'react-native';
@@ -20,31 +21,28 @@ class ImageDisplay extends Component {
   state = { isLoading: false, pics: [], size: { width, height } };
 
   render() {
+    let images = this.props.images.slice(1).map(img => (
+      <View key={`image-${img.mid}`}>
+        <ImageBackground style={this.state.size} source={{ uri: img.content }}>
+          <Text style={styles.textstyle}>{img.title}</Text>
+        </ImageBackground>
+      </View>
+    ));
     return (
-      <View>
-        {this.state.isLoading ? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <View style={{ marginBottom: 2 }}>
-            <Carousel
-              delay={5000}
+      <View style={{ marginBottom: 2 }}>
+        <Carousel delay={5000} style={this.state.size} autoplay currentPage={0}>
+          <View key={`image-${this.props.images[0]?.mid}`}>
+            <ImageBackground
               style={this.state.size}
-              autoplay
-              currentPage={0}
+              source={{ uri: this.props.images[0]?.content }}
             >
-              {this.props.images.map(img => (
-                <Text key={`image-${img.mid}`}>
-                  <ImageBackground
-                    style={this.state.size}
-                    source={{ uri: img.content }}
-                  >
-                    <Text style={styles.textstyle}>{img.title}</Text>
-                  </ImageBackground>
-                </Text>
-              ))}
-            </Carousel>
+              <Text style={styles.textstyle}>
+                {this.props.images[0]?.title}
+              </Text>
+            </ImageBackground>
           </View>
-        )}
+          {images}
+        </Carousel>
       </View>
     );
   }

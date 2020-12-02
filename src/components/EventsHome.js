@@ -27,35 +27,43 @@ class EventHome extends Component {
     //    date[i]=date[i].slice(5,16)
     // }
     return (
-      <ScrollView
-        horizontal={true}
-        alwaysBounceHorizontal
-        Style={styles.container}
-      >
-        {this.props.events.map(sportEvent => (
-          <Card
-            key={`event-${sportEvent.id}`}
-            containerStyle={[this.state.size, { padding: 0 }]}
-          >
-            <Card.Image source={{ uri: sportEvent.sport_img_url }} />
+      <View>
+        <Text
+          h4
+          style={(styles.shadow, { padding: 10, backgroundColor: 'white' })}
+        >
+          Eventos
+        </Text>
+        <ScrollView
+          horizontal={true}
+          alwaysBounceHorizontal
+          Style={styles.container}
+        >
+          {this.props.events.map(sportEvent => (
+            <Card
+              key={`event-${sportEvent.id}`}
+              containerStyle={[this.state.size, { padding: 0 }]}
+            >
+              <Card.Image source={{ uri: sportEvent.sport_img_url }} />
 
-            <TouchableOpacity>
-              <Text
-                style={{ fontWeight: 'bold', textAlign: 'left', margin: 5 }}
-              >
-                {sportEvent.branch == 'Masculino' ? 'Tarzanes' : 'Juanas'} vs{' '}
-                {sportEvent.opponent_name}
-              </Text>
-              <Text style={{ textAlign: 'left', margin: 5 }}>
-                {sportEvent.sport_name} {sportEvent.branch}
-              </Text>
-              <Text style={{ textAlign: 'left', margin: 5 }}>
-                {moment(sportEvent.event_date).utc().format('ll')}
-              </Text>
-            </TouchableOpacity>
-          </Card>
-        ))}
-      </ScrollView>
+              <TouchableOpacity>
+                <Text
+                  style={{ fontWeight: 'bold', textAlign: 'left', margin: 5 }}
+                >
+                  {sportEvent.branch == 'Masculino' ? 'Tarzanes' : 'Juanas'} vs{' '}
+                  {sportEvent.opponent_name}
+                </Text>
+                <Text style={{ textAlign: 'left', margin: 5 }}>
+                  {sportEvent.sport_name} {sportEvent.branch}
+                </Text>
+                <Text style={{ textAlign: 'left', margin: 5 }}>
+                  {moment(sportEvent.event_date).utc().format('ll')}
+                </Text>
+              </TouchableOpacity>
+            </Card>
+          ))}
+        </ScrollView>
+      </View>
     );
   }
 }
