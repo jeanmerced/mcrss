@@ -29,12 +29,17 @@ const MultimediaPost = ({
 }) => {
   const [renderContent, setRenderContent] = useState();
   const [loading, setLoading] = useState(false);
+  // When components mounts check the content of the post to render accordingly
   useEffect(() => {
     switch (type) {
       case 'image':
         setLoading(true);
+        // We use getSize to get height and width to calculate the ratio and make pictures
+        // Keep there ratio
         Image.getSize(content, (width, height) => {
           const ratio = width / height;
+          // Since Image posts can only have titles we put the title below the image since with
+          // 300 characters it can work like captions as well
           setRenderContent(
             <View>
               <Image
@@ -46,7 +51,9 @@ const MultimediaPost = ({
               <View
                 style={{ marginHorizontal: 10, marginBottom: 10, marginTop: 5 }}
               >
-                <Text style={{ textAlign: 'justify' }}>{title}</Text>
+                <Text style={{ textAlign: 'justify', fontSize: 15 }}>
+                  {title}
+                </Text>
               </View>
             </View>
           );
@@ -54,14 +61,20 @@ const MultimediaPost = ({
         });
         break;
       case 'text':
+        // A text post can have two returns. If the text need to be truncated the post will
+        // have touchable opacity and a low navigation to the article screen
         const truncate = content.length > MAX_CHAR;
-        // use msg to use manual truncate or you can use
-        // numberOfLines={11} in <Text />
-        // max is 477 and '... leer más' is 12 characters
+        // use msg to use manual truncate or you can use numberOfLines={11} in <Text />
         const msg = truncate
-          ? content.substring(0, MAX_CHAR - 12) + '...'
+          ? content.substring(0, MAX_CHAR - 3) + '...'
           : content;
-        const textPost = (
+        const navToArticle = () =>
+          navigation.navigate('Article', {
+            title,
+            content,
+          });
+
+        setRenderContent(
           <View
             style={{ marginHorizontal: 10, marginBottom: 10, marginTop: 5 }}
           >
@@ -71,27 +84,15 @@ const MultimediaPost = ({
             <Text style={{ textAlign: 'justify', fontSize: 15 }}>
               {msg}
               {truncate ? (
-                <Text style={{ fontSize: 15, color: 'gray' }}> leer más</Text>
+                <TouchableOpacity
+                  onPress={navToArticle}
+                  hitSlop={{ top: 20, right: 20, left: 20, bottom: 20 }}
+                >
+                  <Text style={{ fontSize: 15, color: 'gray' }}>leer más</Text>
+                </TouchableOpacity>
               ) : null}
             </Text>
           </View>
-        );
-        setRenderContent(
-          truncate ? (
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => {
-                navigation.navigate('Article', {
-                  title,
-                  content,
-                });
-              }}
-            >
-              {textPost}
-            </TouchableOpacity>
-          ) : (
-            textPost
-          )
         );
         break;
       case 'video':
@@ -102,16 +103,17 @@ const MultimediaPost = ({
             <View
               style={{ marginHorizontal: 10, marginBottom: 10, marginTop: 5 }}
             >
-              <Text style={{ textAlign: 'justify' }}>{title}</Text>
+              <Text style={{ textAlign: 'justify', fontSize: 15 }}>
+                {title}
+              </Text>
             </View>
           </View>
         );
-
         break;
       default:
         break;
     }
-  }, [type]);
+  }, []);
 
   return (
     <View style={[styles.postContainer, depth1]}>
@@ -122,11 +124,11 @@ const MultimediaPost = ({
           containerStyle={{ marginHorizontal: 10 }}
         />
         <View>
-          <Text style={{ fontSize: 12 }}>
-            {moment(publishedDate).format('LL')}
+          <Text style={{ fontSize: 13 }}>
+            {moment(publishedDate).utc().format('LL')}
           </Text>
-          <Text style={{ fontSize: 12 }}>
-            {moment(publishedDate).format('h:mm a')}
+          <Text style={{ fontSize: 13 }}>
+            {moment(publishedDate).utc().format('h:mm a')}
           </Text>
         </View>
       </View>
