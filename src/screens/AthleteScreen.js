@@ -106,6 +106,10 @@ const AthleteScreen = ({route}) => {
             sportParam = 'baseball';
             eventStats = 'Baseball_Event_Season_Athlete_Statistics';
             break;
+          case 'Softbol':
+            sportParam = 'softball';
+            eventStats = 'Softball_Event_Season_Athlete_Statistics';
+            break;
           case 'Atletismo':
           case 'Campo Traviesa':
           case 'Halterofilia':
@@ -128,6 +132,7 @@ const AthleteScreen = ({route}) => {
         }
 
         let athleteSeasonUrl= 'https://white-smile-272204.ue.r.appspot.com/results/'+sportParam+'/season/athlete_aggregate/?athlete_id='+id+'&season_year='+Year;
+        
         axios
         .get(athleteSeasonUrl)
         .then(res => {
@@ -164,6 +169,10 @@ const AthleteScreen = ({route}) => {
         case 'Beisbol':
           sportParam = 'baseball';
           eventStats = 'Baseball_Event_Season_Athlete_Statistics';
+          break;
+        case 'Softbol':
+          sportParam = 'softball';
+          eventStats = 'Softball_Event_Season_Athlete_Statistics';
           break;
         case 'Atletismo':
         case 'Campo Traviesa':
@@ -259,7 +268,7 @@ const AthleteScreen = ({route}) => {
           case 'statistics':
             return (
               <View>
-                { (athleteSeason.length==0 || athleteAggregateSeason.length==0  ||  eventAggregateStatistics.length==0 ||  eventStatistics.length==0 || athlete.length==0) ? (
+                { (athleteSeason.length==0 || athleteAggregateSeason.length==0  ||  eventAggregateStatistics.length==0 ||  eventStatistics.length==0 ||+ athlete.length==0) ? (
                       <ActivityIndicator size="large" />
                     ) : ( 
                       <View >

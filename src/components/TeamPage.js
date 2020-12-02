@@ -22,6 +22,7 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import { Colors } from '_styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
+import TeamStatsTable from './TeamStatsTable';
 
 
 
@@ -39,7 +40,7 @@ const buildYearList = () => {
     return yearList;
  }
 
-const TeamPage = ( props) => {
+const TeamPage = ( {sport,branch,sportId,props}) => {
 
     
 const [index, setIndex] = useState(0);
@@ -61,6 +62,84 @@ const [Year,setYear] = useState(()=> {let currentYear=new Date(Date.now()).getFu
 const [team,setTeam] = useState([]);
 
 const [members,setMembers] = useState([]);
+
+const [teamAggregateStatistics,setTeamAggregateStatistics] = useState({});
+
+
+const TeamAggregateInfo = () => {
+        
+  //'data' field in the response has the events[]
+let sportParam;
+let eventStats;
+let teamStats;
+switch (sport) {
+  case 'Voleibol':
+    sportParam = 'volleyball';
+    eventStats = 'Volleyball_Event_Season_Team_Statistics';
+    teamStats = 'volleyball_statistics';
+    break;
+  case 'Baloncesto':
+    sportParam = 'basketball';
+    eventStats = 'Basketball_Event_Season_Team_Statistics';
+    teamStats = 'basketball_statistics';
+    break;
+  case 'Futbol':
+    sportParam = 'soccer';
+    eventStats = 'Soccer_Event_Season_Team_Statistics';
+    teamStats = 'soccer_statistics';
+    break;
+  case 'Beisbol':
+    sportParam = 'baseball';
+    eventStats = 'Baseball_Event_Season_Team_Statistics';
+    break;
+  case 'Softbol':
+    sportParam = 'softball';
+    eventStats = 'Softball_Event_Season_Team_Statistics';
+    break;
+  case 'Atletismo':
+  case 'Campo Traviesa':
+  case 'Halterofilia':
+  case 'Judo':
+  case 'Lucha Olímpica':
+  case 'Natación':
+  case 'Taekwondo':
+  case 'Baile':
+  case 'Porrismo':
+    sportParam = 'medalbased';
+    eventStats = 'Medal_Based_Event_Season_Team_Statistics';
+    break;
+  case 'Tenis de Campo':
+  case 'Tenis de Mesa':
+    sportParam = 'matchbased';
+    eventStats = 'Match_Based_Event_Season_Team_Statistics';
+    break;
+  default:
+    break;
+}
+
+let teamSeasonUrl= 'https://white-smile-272204.ue.r.appspot.com/results/'+sportParam+'/season/team_aggregate/?sport_id='+sportId+'&season_year='+Year;
+
+axios
+  .get(teamSeasonUrl)
+  .then(res => {
+    if (sportParam=='medalbased'){
+      {setTeamAggregateStatistics(res.data[eventStats].map(stats => stats.Event_Statistics))};
+    }
+    else if (sportParam=='matchbased'){
+      let temp={Solo:{},Doble:{}}
+      temp.Solo={...res.data[eventStats][0].Event_Statistics}
+      temp.Doble={...res.data[eventStats][1].Event_Statistics}
+      {setTeamAggregateStatistics(temp)};
+    }
+    else{
+
+    {setTeamAggregateStatistics(res.data[eventStats].Event_Statistics)};
+    }
+    
+  })
+  .catch(err => console.log(err));  
+
+  };
 
 
 const renderItem = ({ item }) => {
@@ -171,7 +250,14 @@ const renderScene = ({ route }) => {
             );
         case 'statistics':
           return (
-            <Text>Estadisticas</Text>
+            <View>
+                { teamAggregateStatistics.length==0 ? (
+                <ActivityIndicator size="large" />
+                ) : ( 
+                <TeamStatsTable sport={sport} teamStatistics={teamAggregateStatistics}
+                       />
+            )}   
+            </View>
           );
         default:
           return null;
@@ -191,7 +277,7 @@ const renderScene = ({ route }) => {
   );
 
   const teamInfo = (Year) => {
-    let teamUrl= 'https://white-smile-272204.ue.r.appspot.com/teams/public/?sport_id='+props.sportId+'&season_year='+Year;
+    let teamUrl= 'https://white-smile-272204.ue.r.appspot.com/teams/public/?sport_id='+sportId+'&season_year='+Year;
     axios
     .get(teamUrl)
     .then(res => {
@@ -225,9 +311,13 @@ const renderScene = ({ route }) => {
 
   };
 
+  
+
 
   useEffect(() => {
       teamInfo(Year)
+      TeamAggregateInfo()
+    
   }, [Year])
 
  

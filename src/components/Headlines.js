@@ -19,7 +19,7 @@ const renderItem = ({ item }) => {
   return (
     <View> 
       <TouchableOpacity>
-      <Text style={{padding:8,margin:10,fontSize:13}}>{title}</Text>
+      <Text style={{padding:5,marginVertical:5,fontSize:13}}>{title}</Text>
       </TouchableOpacity>
     </View>
     
@@ -51,14 +51,13 @@ class Headlines extends Component {
         .then(res => {
           
           //'data' field in the response has the text[]
-          this.setState({text:res.data.Multimedias.slice(-3)});
+          this.setState({text:res.data.Multimedias.slice(-5)});
           this.setState({ isLoading: false });
 
         })
         .catch(err => console.log(err));
     }
     render() {
-      console.log(this.state.text);
       return (
         <View>
           {this.state.isLoading ? (

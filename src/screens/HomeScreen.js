@@ -18,7 +18,7 @@ const HomeScreen = ({ navigation }) => {
       <Headlines/>
       <Text h4 style={styles.shadow,{padding:10,backgroundColor:'white'}} >Eventos</Text>
       <EventHome  style={styles.shadow,{padding:10}} />
-      <Text h4 style={{padding:10,marginTop:10, backgroundColor:'white'}} >Multimedios</Text>
+      <Text h4 style={{padding:10,marginTop:10, backgroundColor:'white'}} >Videos</Text>
       <Multimedios/>
       </ScrollView>
     </SafeAreaView>

@@ -1,18 +1,19 @@
 import React, { Component } from 'react'
-import { StyleSheet,ActivityIndicator, Text, View,Dimensions, ImageBackground } from 'react-native'
+import { StyleSheet,ActivityIndicator, Text, View,Dimensions,ScrollView, ImageBackground } from 'react-native'
 import { Image} from 'react-native-elements'
-import axios from 'axios';
+import axios from 'axios'
+import YoutubePlayer from '_components/YoutubePlayer'
 
-const imageUrl = 'https://white-smile-272204.ue.r.appspot.com/multimedia/image'
+const imageUrl = 'https://white-smile-272204.ue.r.appspot.com/multimedia/video'
 
 let {width,height} = Dimensions.get('window');
 
-height=height/4;
-width=width/2.3;
+height=height;
+width=width;
 
 
 class Multimedios extends Component {
-    state = { isLoading: false, pics: [], size: { width, height },};
+    state = { isLoading: false, vid: [], size: { width, height },};
   
     componentDidMount() {
       this.setState({ isLoading: true });
@@ -22,15 +23,14 @@ class Multimedios extends Component {
         .then(res => {
           this.setState({ isLoading: false });
           //'data' field in the response has the events[]
-          this.setState({pics:res.data.Multimedias.slice(-20)})
+          this.setState({vid:res.data.Multimedias.slice(-20)})
           
         })
         .catch(err => console.log(err));
     }
   
     render() {
-      let images = this.state.pics.map(a => a.content);
-      let title = this.state.pics.map(a => a.title);
+      let videos = this.state.vid.map(a => a.content);
       
       return (
         <View>
@@ -38,14 +38,12 @@ class Multimedios extends Component {
             <ActivityIndicator size="large" />
           ) : ( 
 
-              <View  style={styles.container}>
-                {images.map((img)=><Image 
-                key={img}
-                containerStyle={{margin:10}}
-                source={{ uri: img }}
-                style={this.state.size}
-                PlaceholderContent={<ActivityIndicator />}/>)}
-              </View>
+              <ScrollView >
+                {videos.map((vids)=><View style={{padding:10}} ><YoutubePlayer
+                key={vids}
+                videoLink={ vids }
+                /></View>)}
+              </ScrollView>
 
           )}
         </View>

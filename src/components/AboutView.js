@@ -69,7 +69,7 @@ class AboutView extends Component {
                   <Text style={{fontWeight:'bold',textAlign:'left',margin:20}}>
                     Sobre Nosotros
                   </Text>
-                  <Text style={{textAlign:'left',marginHorizontal:40}}>
+                  <Text numberOfLines={8} style={{textAlign:'left',marginHorizontal:20}}>
                       {description}
                   </Text>
 
@@ -93,8 +93,8 @@ class AboutView extends Component {
                 </View>
                 <View>
 
-                {this.state.members.map(a => (
-                <Card  containerStyle={[{padding:10}]}  >
+                {this.state.members.map((a,i) => (
+                <Card key={i} containerStyle={[{padding:10}]}  >
                 <Card.Image  source={{uri:a.picture}} resizeMode={'center'}  style={{borderRadius: 100 }} />
                 <Text style={{fontWeight:'bold',textAlign:'center',margin:5}}>
                       {a.hdmember}

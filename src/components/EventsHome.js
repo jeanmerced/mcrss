@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { StyleSheet,ActivityIndicator, View,Dimensions,ScrollView,TouchableOpacity} from 'react-native'
 import {Card,Text,Image, Button, Icon } from 'react-native-elements'
-import axios from 'axios';
+import axios from 'axios'
+import moment from 'moment'
 
 
 const imageUrl = 'https://white-smile-272204.ue.r.appspot.com/events'
@@ -47,9 +48,9 @@ class EventHome extends Component {
           branch[i]='Juanas'
         }
       }
-      for (let i = 0; i < date.length; i++) {
-         date[i]=date[i].slice(5,16)
-      }
+      // for (let i = 0; i < date.length; i++) {
+      //    date[i]=date[i].slice(5,16)
+      // }
       return (
         <View>
           {this.state.isLoading ? (
@@ -69,7 +70,7 @@ class EventHome extends Component {
                       {sport[0]} {spb[0]}
                   </Text>
                   <Text style={{textAlign:'left',margin:5}}>
-                      {date[0]}
+                        {moment(date[0]).utc().format('ll')}
                   </Text>
                   </TouchableOpacity>
                 </Card>
@@ -87,7 +88,7 @@ class EventHome extends Component {
                       {sport[1]} {spb[1]}
                   </Text>
                   <Text style={{textAlign:'left',margin:5}}>
-                      {date[1]}
+                       {moment(date[1]).utc().format('ll')}
                   </Text>
                   </TouchableOpacity>
                 </Card>
@@ -104,7 +105,7 @@ class EventHome extends Component {
                       {sport[2]} {spb[2]}
                   </Text>
                   <Text style={{textAlign:'left',margin:5}}>
-                      {date[2]}
+                      {moment(date[2]).utc().format('ll')}
                   </Text>
                   </TouchableOpacity>
                 </Card>
@@ -121,7 +122,7 @@ class EventHome extends Component {
                       {sport[3]} {spb[3]}
                   </Text>
                   <Text style={{textAlign:'left',margin:5}}>
-                      {date[3]}
+                  {moment(date[3]).utc().format('ll')}
                   </Text>
                   </TouchableOpacity>
                 </Card>

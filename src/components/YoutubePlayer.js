@@ -1,11 +1,13 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-const YoutubePlayer = ({ videoId }) => (
-  <View>
-    <WebView source={{ uri: `https://www.youtube.com/embed/${videoId}` }} />
-  </View>
+const width = Dimensions.get('window').width;
+const YoutubePlayer = ({ videoLink }) => (
+  <WebView
+    source={{ uri: videoLink }}
+    containerStyle={{ width: '100%', aspectRatio: 1.77 }}
+  />
 );
 
 export default YoutubePlayer;
