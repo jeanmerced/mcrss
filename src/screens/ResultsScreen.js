@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import CalendarStrip from 'react-native-calendar-strip';
 import ResultCard from '_components/ResultCard';
+import PBPResultCard from '_components/PBPResultCard';
 import { Colors, Elevations } from '_styles';
 
 // When Calendar changes date we need to filter the events to be displayed
@@ -22,9 +23,11 @@ const filterByDate = (eventsArr, date) => {
     the selectedDate and event_date to 'yyyy-mm-dd' so that they
     can be comapred properly.
     */
-  const formatDate = moment(date).format('YYYY-MM-DD');
+  const formatDate = moment(date).utc().format('YYYY-MM-DD');
   const filterEvents = eventsArr.filter(sportEvent => {
-    const formatEventDate = moment(sportEvent.event_date).format('YYYY-MM-DD');
+    const formatEventDate = moment(sportEvent.event_date)
+      .utc()
+      .format('YYYY-MM-DD');
     return moment(formatEventDate).isSame(formatDate);
   });
   return filterEvents;
@@ -100,7 +103,11 @@ const ResultsScreen = ({ navigation }) => {
   }, []);
 
   const EmptyList = () => (
-    <View>{loading ? null : <Text>No hay eventos para esta fecha</Text>}</View>
+    <View style={{ alignSelf: 'center', marginTop: '50%' }}>
+      {loading ? null : (
+        <Text style={{ fontSize: 18 }}>No hay eventos para esta fecha.</Text>
+      )}
+    </View>
   );
   const renderEvent = ({ item }) => {
     const oppName = item.opponent_name;
@@ -112,7 +119,7 @@ const ResultsScreen = ({ navigation }) => {
     // When a card is touch navigate to the event screen
     return (
       <TouchableOpacity
-        activeOpacity={0.9}
+        activeOpacity={0.8}
         onPress={() => {
           const destination = item.hasPBP ? 'PBP' : 'Event';
           navigation.navigate(destination, {
@@ -125,12 +132,30 @@ const ResultsScreen = ({ navigation }) => {
           });
         }}
       >
-        <ResultCard
-          sportName={item.sport_name}
-          uprmName={uprmName}
-          opponentName={oppName}
-          location={item.venue}
-        />
+        {item.hasPBP ? (
+          <PBPResultCard
+            eventId={item.id}
+            sportName={item.sport_name}
+            sportImg={item.sport_img_url}
+            uprmName={uprmName}
+            opponentName={oppName}
+            isLocal={item.is_local}
+            venue={item.venue}
+            eventDate={item.event_date}
+          />
+        ) : (
+          <ResultCard
+            sportName={item.sport_name}
+            sportImg={item.sport_img_url}
+            uprmName={uprmName}
+            opponentName={oppName}
+            isLocal={item.is_local}
+            localScore={item.local_score}
+            opponentScore={item.opponent_score}
+            venue={item.venue}
+            eventDate={item.event_date}
+          />
+        )}
       </TouchableOpacity>
     );
   };
