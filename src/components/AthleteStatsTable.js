@@ -7,7 +7,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import StatsLegend from '_components/StatsLegend';
 import { Colors, Elevations } from '_styles';
 
 const isMedalBased = sport => {
@@ -173,16 +172,13 @@ const AthleteStatsTable = ({ sport, athleteStatistics }) => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        style={Elevations.depth1}
-        data={[{ key: 'table', render: table }]}
-        renderItem={({ item }) => item.render}
-        ListHeaderComponent={Header}
-        stickyHeaderIndices={[0]}
-      />
-      <StatsLegend sport={sport} />
-    </View>
+    <FlatList
+      style={Elevations.depth1}
+      data={[{ key: 'table', render: table }]}
+      renderItem={({ item }) => item.render}
+      ListHeaderComponent={Header}
+      stickyHeaderIndices={[0]}
+    />
   );
 };
 

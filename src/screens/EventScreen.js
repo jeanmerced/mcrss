@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { SafeAreaView, Share, Dimensions, StyleSheet } from 'react-native';
+import {
+  SafeAreaView,
+  Share,
+  Dimensions,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import axios from 'axios';
 import { Entypo } from '@expo/vector-icons';
-
 import AthleteStatsTable from '_components/AthleteStatsTable';
 import TeamStatsTable from '_components/TeamStatsTable';
+import StatsLegend from '_components/StatsLegend';
 
 import { Colors, Elevations } from '_styles';
 
@@ -118,10 +124,13 @@ const EventScreen = ({ route, navigation }) => {
     switch (route.key) {
       case 'athletes':
         return (
-          <AthleteStatsTable
-            sport={sport}
-            athleteStatistics={results.athleteStatistics}
-          />
+          <View style={{ flex: 1 }}>
+            <AthleteStatsTable
+              sport={sport}
+              athleteStatistics={results.athleteStatistics}
+            />
+            <StatsLegend sport={sport} />
+          </View>
         );
       case 'team':
         return (
