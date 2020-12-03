@@ -120,12 +120,16 @@ const ScoreBox = ({
   // />;
 
   return (
-    <View style={[styles.container, depth1]}>
-      {firstColumn}
-      <View style={styles.row}>
-        {partialScores.map((item, index) => formatColumn(item, index))}
-        {sport != 'Voleibol' ? totalColumn : <View />}
-      </View>
+    <View>
+      {sport != 'Futbol' ? (
+        <View style={[styles.container, depth1]}>
+          {firstColumn}
+          <View style={styles.row}>
+            {partialScores.map((item, index) => formatColumn(item, index))}
+            {sport != 'Voleibol' ? totalColumn : null}
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 };
