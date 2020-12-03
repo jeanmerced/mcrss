@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, Dimensions, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { SafeAreaView, Share, Dimensions, StyleSheet } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import axios from 'axios';
+import { Entypo } from '@expo/vector-icons';
+
 import AthleteStatsTable from '_components/AthleteStatsTable';
 import TeamStatsTable from '_components/TeamStatsTable';
 
 import { Colors, Elevations } from '_styles';
 
 const url = 'https://white-smile-272204.ue.r.appspot.com/results/';
+const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/eventos';
 
-const EventScreen = ({ route }) => {
-  const { sport, eventId } = route.params;
+const EventScreen = ({ route, navigation }) => {
+  const { sport, eventId, summary } = route.params;
   const [results, setResults] = useState({
     athleteStatistics: [],
     teamStatistics: {},
@@ -20,6 +23,37 @@ const EventScreen = ({ route }) => {
     { key: 'athletes', title: 'Atletas' },
     { key: 'team', title: 'Equipo' },
   ]);
+
+  const onShare = async (msg, id) => {
+    try {
+      const result = await Share.share({
+        message: `${msg ? msg + '\n' : ''}${shareUrl}/${id}`,
+        /*
+        URL sharing not supported for Android
+        You will need to eject the app from expo and use react-native-share
+        For the moment we place the url link in the message but to enable it for ios
+        discomment line below and remove `\n${shareUrl}/${id}` from message
+        */
+        // url: `${shareUrl}/${id}`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Entypo
+          name="share-alternative"
+          size={24}
+          color="white"
+          style={{ padding: 10 }}
+          onPress={() => onShare(summary, eventId)}
+        />
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const getResults = (sport, eventId) => {

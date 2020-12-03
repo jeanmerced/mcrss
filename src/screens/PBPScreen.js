@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
   StatusBar,
   Dimensions,
+  Share,
 } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import {
@@ -18,14 +19,49 @@ import PBPTeamStats from '_components/PBPTeamStats';
 import ScoreBox from '_components/ScoreBox';
 import Scoreboard from '_components/Scoreboard';
 import AthleteStatsTab from '_screens/AthleteStatsTab';
+import { Entypo } from '@expo/vector-icons';
 import { Colors, Elevations } from '_styles';
 
-const PBPScreen = ({ route }) => {
-  const { eventId, sport, isLocal, uprmName, oppName } = route.params;
+const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/eventos';
+
+const PBPScreen = ({ route, navigation }) => {
+  const { eventId, sport, summary, isLocal, uprmName, oppName } = route.params;
   const { gameIsOver, currentSet, opponentColor } = useGameData(eventId);
   const gameActions = useGameActions(eventId, gameIsOver);
   const teamRosters = useTeamRosters(eventId, gameIsOver);
   const partialScores = usePartialScores(eventId);
+
+  const onShare = async (msg, id) => {
+    try {
+      const result = await Share.share({
+        message: `${msg}\n${shareUrl}/${id}`,
+        type: 'image',
+        /*
+        URL sharing not supported for Android
+        You will need to eject the app from expo and use react-native-share
+        For the moment we place the url link in the message but to enable it for ios
+        discomment line below and remove `\n${shareUrl}/${id}` from message
+        */
+        // url: `${shareUrl}/${id}`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Entypo
+          name="share-alternative"
+          size={24}
+          color="white"
+          style={{ padding: 10 }}
+          onPress={() => onShare(summary, eventId)}
+        />
+      ),
+    });
+  }, [navigation]);
 
   /* 
   TabView behaves like a navigator, for this reason we create

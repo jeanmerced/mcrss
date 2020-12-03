@@ -123,6 +123,7 @@ const ResultsScreen = ({ navigation }) => {
           const destination = item.hasPBP ? 'PBP' : 'Event';
           navigation.navigate(destination, {
             title: eventTitle,
+            summary: item.event_summary,
             eventId: item.id,
             sport: item.sport_name,
             isLocal: item.is_local,
