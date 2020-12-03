@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,11 +9,13 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Share,
 } from 'react-native';
 import { Image, Avatar, Text, Divider } from 'react-native-elements';
 import axios from 'axios';
 import { TabView, TabBar } from 'react-native-tab-view';
 import AtheleteStatsTable from '_components/AthleteStatsTable';
+import { Entypo } from '@expo/vector-icons';
 import { Colors } from '_styles';
 import { useNavigation } from '@react-navigation/native';
 import AthleteStatsTable from '_components/AthleteStatsTable';
@@ -32,7 +34,9 @@ const buildYearList = () => {
   return yearList;
 };
 
-const AthleteScreen = ({ route }) => {
+const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/atletas';
+
+const AthleteScreen = ({ route, navigation }) => {
   const { id, sportname } = route.params;
 
   let yearList = buildYearList();
@@ -54,6 +58,37 @@ const AthleteScreen = ({ route }) => {
     { key: 'AthleteInfo', title: 'Información' },
     { key: 'statistics', title: 'Estadisticas Del Jugador' },
   ]);
+
+  const onShare = async id => {
+    try {
+      const result = await Share.share({
+        message: `${shareUrl}/${id}`,
+        /*
+        URL sharing not supported for Android
+        You will need to eject the app from expo and use react-native-share
+        For the moment we place the url link in the message but to enable it for ios
+        discomment line below and remove `\n${shareUrl}/${id}` from message
+        */
+        // url: `${shareUrl}/${id}`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Entypo
+          name="share-alternative"
+          size={24}
+          color="white"
+          style={{ padding: 10 }}
+          onPress={() => onShare(id)}
+        />
+      ),
+    });
+  }, [navigation]);
 
   const athleteInfo = () => {
     let athleteUrl =
@@ -139,12 +174,14 @@ const AthleteScreen = ({ route }) => {
           setEventStatistics(res.data[eventStats].Event_Statistics);
         }
       })
-      .catch(err => { {
-        setAthleteSeason([]);
-      }
-      {
-        setEventStatistics([]);
-      }})
+      .catch(err => {
+        {
+          setAthleteSeason([]);
+        }
+        {
+          setEventStatistics([]);
+        }
+      });
   };
 
   const athleteAggregateInfo = () => {
@@ -213,19 +250,16 @@ const AthleteScreen = ({ route }) => {
           setEventAggregateStatistics(res.data[eventStats].Event_Statistics);
         }
       })
-      .catch(err => {console.log(err)});
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
-
     athleteInfo();
     athleteSeasonInfo();
     athleteAggregateInfo();
-    
-
   }, [Year]);
-
-
 
   const renderScene = ({ route }) => {
     switch (route.key) {
@@ -324,7 +358,7 @@ const AthleteScreen = ({ route }) => {
       case 'statistics':
         return (
           <View>
-          <View style={{ flex: 0, flexDirection: 'row', padding: 10 }}>
+            <View style={{ flex: 0, flexDirection: 'row', padding: 10 }}>
               <Text h4 style={{ width: '50%', textAlign: 'center' }}>
                 Temporada
               </Text>
@@ -348,49 +382,76 @@ const AthleteScreen = ({ route }) => {
             eventAggregateStatistics.length == 0 ||
             eventStatistics.length == 0 ||
             athlete.length == 0 ? (
-            <View>
-            
-              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
-              No hay estadísticas para la temporada: {Year}
-              </Text>
-
-             { athlete.length == 0 || eventAggregateStatistics.length == 0 ||athleteAggregateSeason.length == 0 ? ( <Text style={{textAlign: 'left' ,marginHorizontal:10, marginVertical:20, fontWeight:'bold', fontSize:20}}>
-              No hay estadísticas de Carrera
-            </Text> 
-            ) : (
               <View>
-                <View style={{ zIndex: -1, marginVertical:20 }}>
-                  <Text  style={{textAlign: 'left' ,marginHorizontal:10, fontWeight:'bold', fontSize:20}}>
-                    Estadísticas de Carrera:
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    marginHorizontal: 10,
+                    marginVertical: 20,
+                    fontWeight: 'bold',
+                    fontSize: 20,
+                  }}
+                >
+                  No hay estadísticas para la temporada: {Year}
+                </Text>
+
+                {athlete.length == 0 ||
+                eventAggregateStatistics.length == 0 ||
+                athleteAggregateSeason.length == 0 ? (
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      marginHorizontal: 10,
+                      marginVertical: 20,
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                    }}
+                  >
+                    No hay estadísticas de Carrera
                   </Text>
-                </View>
-                <View>
-                  <AthleteStatsTable
-                    sport={athlete.sportName}
-                    athleteStatistics={[
-                      {
-                        athlete_info: athleteAggregateSeason,
-                        statistics: eventAggregateStatistics,
-                      },
-                    ]}
-                  />
-                </View>
-                </View>
+                ) : (
+                  <View>
+                    <View style={{ zIndex: -1, marginVertical: 20 }}>
+                      <Text
+                        style={{
+                          textAlign: 'left',
+                          marginHorizontal: 10,
+                          fontWeight: 'bold',
+                          fontSize: 20,
+                        }}
+                      >
+                        Estadísticas de Carrera:
+                      </Text>
+                    </View>
+                    <View>
+                      <AthleteStatsTable
+                        sport={athlete.sportName}
+                        athleteStatistics={[
+                          {
+                            athlete_info: athleteAggregateSeason,
+                            statistics: eventAggregateStatistics,
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
                 )}
-             
-            </View>
-            
-              
+              </View>
             ) : (
               <View>
-               
-
-                <View style={{ zIndex: -1, marginVertical:20 }}>
-                  <Text  style={{textAlign: 'left' ,marginHorizontal:10, fontWeight:'bold', fontSize:20}}>
+                <View style={{ zIndex: -1, marginVertical: 20 }}>
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      marginHorizontal: 10,
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                    }}
+                  >
                     Estadísticas de la Temporada {Year}:
                   </Text>
                 </View>
-                
+
                 <View style={{ zIndex: -1 }}>
                   <AthleteStatsTable
                     sport={athlete.sportName}
@@ -401,10 +462,17 @@ const AthleteScreen = ({ route }) => {
                       },
                     ]}
                   />
-                  </View>
+                </View>
 
-                  <View style={{ zIndex: -1, marginVertical:20 }}>
-                  <Text  style={{textAlign: 'left' ,marginHorizontal:10, fontWeight:'bold', fontSize:20}}>
+                <View style={{ zIndex: -1, marginVertical: 20 }}>
+                  <Text
+                    style={{
+                      textAlign: 'left',
+                      marginHorizontal: 10,
+                      fontWeight: 'bold',
+                      fontSize: 20,
+                    }}
+                  >
                     Estadísticas de Carrera:
                   </Text>
                 </View>

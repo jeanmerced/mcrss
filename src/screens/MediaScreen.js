@@ -61,6 +61,7 @@ const MediaScreen = ({ navigation }) => {
   ]);
   const renderPost = ({ item }) => (
     <MultimediaPost
+      postId={item.mid}
       title={item.title}
       navigation={navigation}
       publishedDate={item.date_published}

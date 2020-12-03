@@ -35,7 +35,6 @@ const PBPScreen = ({ route, navigation }) => {
     try {
       const result = await Share.share({
         message: `${msg}\n${shareUrl}/${id}`,
-        type: 'image',
         /*
         URL sharing not supported for Android
         You will need to eject the app from expo and use react-native-share
