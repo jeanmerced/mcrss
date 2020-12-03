@@ -122,7 +122,12 @@ const renderItem = ({ item }) => {
   return (
     <View>
                 { athlete.length==0 ? (
-                <ActivityIndicator size="large" />
+                <View>
+            
+                <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
+                No hay atletas para este Deporte
+                </Text>
+                </View>
                 ) : ( 
     
                     <View style={styles.container,{padding:4,marginTop:10,marginBottom:15,backgroundColor:'white'}}>

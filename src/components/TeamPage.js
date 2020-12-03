@@ -134,7 +134,10 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           }
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => { {
+        setTeamAggregateStatistics([]);
+      }
+      })
   };
 
   const renderItem = ({ item }) => {
@@ -198,7 +201,12 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
         return (
           <View style={styles.container}>
             {team.length == 0 ? (
-              <ActivityIndicator size="large" />
+              <View>
+            
+              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
+              No hay equipo para la temporada: {Year}
+              </Text>
+              </View>
             ) : (
               <View>
                 {team.team_info.team_image_url == '' ? (
@@ -234,7 +242,12 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
         return (
           <View>
             {members.length == 0 ? (
-              <ActivityIndicator size="large" />
+              <View>
+            
+              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
+              No hay integrantes para la temporada: {Year}
+              </Text>
+              </View>
             ) : (
               <View
                 style={
@@ -262,7 +275,12 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
         return (
           <View>
             {teamAggregateStatistics.length == 0 ? (
-              <ActivityIndicator size="large" />
+              <View>
+            
+              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
+              No hay estadisticas de equipo para la temporada: {Year}
+              </Text>
+              </View>
             ) : (
               <TeamStatsTable
                 sport={sport}
@@ -302,10 +320,13 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
         {
           setTeam(res.data.Team);
         }
-
         Members(res.data.Team.team_info.team_id);
       })
-      .catch(err => console.log(err));
+      .catch(err => { {
+        setTeam([]);
+        setMembers([]);
+      }
+      })
   };
 
   const Members = teamid => {
@@ -320,7 +341,9 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           setMembers(res.data.Team);
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => { {
+      }
+      })
   };
 
   useEffect(() => {
