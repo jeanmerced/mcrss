@@ -6,15 +6,11 @@ import {
   SafeAreaView,
   StatusBar,
   Dimensions,
-  Share,
 } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import TeamPage from '_components/TeamPage';
 import AthletePage from '_components/AthletePage';
-import { Entypo } from '@expo/vector-icons';
 import { Colors } from '_styles';
-
-const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/deportes';
 
 const TeamInfo = ({ route, navigation }) => {
   const { sportId, branch, title } = route.params;
@@ -25,46 +21,17 @@ const TeamInfo = ({ route, navigation }) => {
     { key: 'athletes', title: 'Atletas' },
   ]);
 
-  const onShare = async (branch, id) => {
-    let sport = branch;
-    if (sport == 'exhibición') {
-      sport = 'exhibicin';
-    }
-
-    try {
-      const result = await Share.share({
-        message: `${shareUrl}-${sport}/equipo/${id}`,
-        /*
-        URL sharing not supported for Android
-        You will need to eject the app from expo and use react-native-share
-        For the moment we place the url link in the message but to enable it for ios
-        discomment line below and remove `\n${shareUrl}/${id}` from message
-        */
-        // url: `${shareUrl}/${id}`,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Entypo
-          name="share-alternative"
-          size={24}
-          color="white"
-          style={{ padding: 10 }}
-          onPress={() => onShare(branch.toLowerCase(), sportId)}
-        />
-      ),
-    });
-  }, [navigation]);
-
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'team':
-        return <TeamPage sport={title} branch={branch} sportId={sportId} />;
+        return (
+          <TeamPage
+            sport={title}
+            branch={branch}
+            sportId={sportId}
+            navigation={navigation}
+          />
+        );
       case 'athletes':
         return <AthletePage sport={title} branch={branch} sportId={sportId} />;
       default:

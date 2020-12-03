@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,6 +8,7 @@ import {
   View,
   FlatList,
   TouchableOpacity,
+  Share,
 } from 'react-native';
 import { Image, Avatar, Text, Divider } from 'react-native-elements';
 import axios from 'axios';
@@ -16,8 +17,9 @@ import { Colors } from '_styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
 import TeamStatsTable from './TeamStatsTable';
-import { useNavigation } from '@react-navigation/native';
+import { Entypo } from '@expo/vector-icons';
 
+const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/deportes';
 
 const buildYearList = () => {
   let yearFirst = 2019;
@@ -31,7 +33,7 @@ const buildYearList = () => {
   return yearList;
 };
 
-const TeamPage = ({ sport, branch, sportId, props }) => {
+const TeamPage = ({ sport, branch, sportId, navigation }) => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'description', title: 'Descripcion' },
@@ -48,11 +50,51 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
 
   const [team, setTeam] = useState([]);
 
-  const navigation = useNavigation();
-
   const [members, setMembers] = useState([]);
 
   const [teamAggregateStatistics, setTeamAggregateStatistics] = useState({});
+
+  const onShare = async (msg, branch, id) => {
+    let sport = branch;
+    if (sport == 'exhibición') {
+      sport = 'exhibicion';
+    }
+
+    try {
+      const result = await Share.share({
+        message: `${msg}\n${shareUrl}-${sport}/equipo/${id}`,
+        /*
+        URL sharing not supported for Android
+        You will need to eject the app from expo and use react-native-share
+        For the moment we place the url link in the message but to enable it for ios
+        discomment line below and remove `\n${shareUrl}/${id}` from message
+        */
+        // url: `${shareUrl}/${id}`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Entypo
+          name="share-alternative"
+          size={24}
+          color="white"
+          style={{ padding: 10 }}
+          onPress={() =>
+            onShare(
+              team.team_info.about_team ?? 'Informacópn de Equipo',
+              branch.toLowerCase(),
+              sportId
+            )
+          }
+        />
+      ),
+    });
+  }, [navigation, team]);
 
   const TeamAggregateInfo = () => {
     //'data' field in the response has the events[]
@@ -134,10 +176,11 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           }
         }
       })
-      .catch(err => { {
-        setTeamAggregateStatistics([]);
-      }
-      })
+      .catch(err => {
+        {
+          setTeamAggregateStatistics([]);
+        }
+      });
   };
 
   const renderItem = ({ item }) => {
@@ -166,11 +209,12 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           />
         )}
         <TouchableOpacity
-         onPress={() => {
-          navigation.navigate('Athlete Info',{
-          id:item.athlete_id,sportname:sport,}
-          );  
-        }}
+          onPress={() => {
+            navigation.navigate('Athlete Info', {
+              id: item.athlete_id,
+              sportname: sport,
+            });
+          }}
         >
           <View>
             <Text h4 style={{ padding: 10 }}>
@@ -202,10 +246,17 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           <View style={styles.container}>
             {team.length == 0 ? (
               <View>
-            
-              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
-              No hay equipo para la temporada: {Year}
-              </Text>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    marginHorizontal: 10,
+                    marginVertical: 20,
+                    fontWeight: 'bold',
+                    fontSize: 20,
+                  }}
+                >
+                  No hay equipo para la temporada: {Year}
+                </Text>
               </View>
             ) : (
               <View>
@@ -243,10 +294,17 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           <View>
             {members.length == 0 ? (
               <View>
-            
-              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
-              No hay integrantes para la temporada: {Year}
-              </Text>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    marginHorizontal: 10,
+                    marginVertical: 20,
+                    fontWeight: 'bold',
+                    fontSize: 20,
+                  }}
+                >
+                  No hay integrantes para la temporada: {Year}
+                </Text>
               </View>
             ) : (
               <View
@@ -276,10 +334,17 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           <View>
             {teamAggregateStatistics.length == 0 ? (
               <View>
-            
-              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
-              No hay estadisticas de equipo para la temporada: {Year}
-              </Text>
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    marginHorizontal: 10,
+                    marginVertical: 20,
+                    fontWeight: 'bold',
+                    fontSize: 20,
+                  }}
+                >
+                  No hay estadisticas de equipo para la temporada: {Year}
+                </Text>
               </View>
             ) : (
               <TeamStatsTable
@@ -322,11 +387,12 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
         }
         Members(res.data.Team.team_info.team_id);
       })
-      .catch(err => { {
-        setTeam([]);
-        setMembers([]);
-      }
-      })
+      .catch(err => {
+        {
+          setTeam([]);
+          setMembers([]);
+        }
+      });
   };
 
   const Members = teamid => {
@@ -341,9 +407,10 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
           setMembers(res.data.Team);
         }
       })
-      .catch(err => { {
-      }
-      })
+      .catch(err => {
+        {
+        }
+      });
   };
 
   useEffect(() => {
