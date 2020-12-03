@@ -140,10 +140,10 @@ const MultimediaPost = ({
         />
         <View>
           <Text style={{ fontSize: 13 }}>
-            {moment(publishedDate).utc().format('LL')}
+            {moment(publishedDate).utc(true).format('LL')}
           </Text>
           <Text style={{ fontSize: 13 }}>
-            {moment(publishedDate).utc().format('h:mm a')}
+            {moment(publishedDate).utc(true).format('h:mm a')}
           </Text>
         </View>
       </View>

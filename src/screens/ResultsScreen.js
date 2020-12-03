@@ -23,10 +23,10 @@ const filterByDate = (eventsArr, date) => {
     the selectedDate and event_date to 'yyyy-mm-dd' so that they
     can be comapred properly.
     */
-  const formatDate = moment(date).utc().format('YYYY-MM-DD');
+  const formatDate = moment(date).utc(true).format('YYYY-MM-DD');
   const filterEvents = eventsArr.filter(sportEvent => {
     const formatEventDate = moment(sportEvent.event_date)
-      .utc()
+      .utc(true)
       .format('YYYY-MM-DD');
     return moment(formatEventDate).isSame(formatDate);
   });
@@ -56,10 +56,9 @@ const ResultsScreen = ({ navigation }) => {
   // Array of all sport events when they are fetch
   const [sportEvents, setSportEvents] = useState([]);
   // Array of event dates to mark the calendar
-  const [selectedDate, setSelectedDate] = useState(() => moment());
+  const [selectedDate, setSelectedDate] = useState(() => moment().utc(true));
   // Reference to calendar strip to get the selected date on refresh
   const calendarRef = useRef(null);
-
   // The Results only shows filtered results
   // Events are filter only when selected date or sportEvents changes
   const filteredEvents = useMemo(

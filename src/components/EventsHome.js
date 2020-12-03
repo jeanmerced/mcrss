@@ -57,7 +57,7 @@ class EventHome extends Component {
                   {sportEvent.sport_name} {sportEvent.branch}
                 </Text>
                 <Text style={{ textAlign: 'left', margin: 5 }}>
-                  {moment(sportEvent.event_date).utc().format('ll')}
+                  {moment(sportEvent.event_date).utc(true).format('ll')}
                 </Text>
               </TouchableOpacity>
             </Card>
