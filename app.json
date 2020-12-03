@@ -17,6 +17,9 @@
     "ios": {
       "supportsTablet": false
     },
+    "android": {
+      "useNextNotificationsApi": true
+    },
     "web": {
       "favicon": "./assets/favicon.png"
     }
