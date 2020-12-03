@@ -16,6 +16,8 @@ import { Colors } from '_styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
 import TeamStatsTable from './TeamStatsTable';
+import { useNavigation } from '@react-navigation/native';
+
 
 const buildYearList = () => {
   let yearFirst = 2019;
@@ -33,7 +35,7 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     { key: 'description', title: 'Descripcion' },
-    { key: 'athletes', title: 'Atletas' },
+    { key: 'athletes', title: 'Integrantes' },
     { key: 'statistics', title: 'Estadisticas' },
   ]);
 
@@ -45,6 +47,8 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
   });
 
   const [team, setTeam] = useState([]);
+
+  const navigation = useNavigation();
 
   const [members, setMembers] = useState([]);
 
@@ -158,7 +162,13 @@ const TeamPage = ({ sport, branch, sportId, props }) => {
             PlaceholderContent={<ActivityIndicator />}
           />
         )}
-        <TouchableOpacity>
+        <TouchableOpacity
+         onPress={() => {
+          navigation.navigate('Athlete Info',{
+          id:item.athlete_id,sportname:sport,}
+          );  
+        }}
+        >
           <View>
             <Text h4 style={{ padding: 10 }}>
               {item.first_name} {item.last_names} #{item.number}

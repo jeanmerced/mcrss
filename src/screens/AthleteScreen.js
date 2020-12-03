@@ -318,33 +318,52 @@ const AthleteScreen = ({ route }) => {
       case 'statistics':
         return (
           <View>
+          <View style={{ flex: 0, flexDirection: 'row', padding: 10 }}>
+              <Text h4 style={{ width: '50%', textAlign: 'center' }}>
+                Temporada
+              </Text>
+              <DropDownPicker
+                items={yearList.map(year => ({
+                  label: year.season_year.toString(),
+                  value: year.season_year.toString(),
+                  icon: () => <Icon name="calendar" size={25} />,
+                }))}
+                defaultValue={Year}
+                containerStyle={{ height: 40, width: '40%' }}
+                itemStyle={{
+                  justifyContent: 'flex-start',
+                }}
+                dropDownStyle={{ backgroundColor: '#fafafa' }}
+                onChangeItem={item => setYear(item.value)}
+              />
+            </View>
             {athleteSeason.length == 0 ||
             athleteAggregateSeason.length == 0 ||
             eventAggregateStatistics.length == 0 ||
             eventStatistics.length == 0 ||
             +athlete.length == 0 ? (
-              <ActivityIndicator size="large" />
+            <Text>
+              <Text style={{textAlign: 'left' ,marginHorizontal:10,marginVertical:20, fontWeight:'bold', fontSize:20}}>
+              No hay estadísticas para la temporada: {Year}
+              </Text>
+              <Text style={{textAlign: 'left' ,marginHorizontal:10, marginVertical:20, fontWeight:'bold', fontSize:20}}>
+              No hay estadísticas para la temporada: {Year}  
+            </Text>
+              
+            </Text>
+
+            
+              
             ) : (
               <View>
-                <View style={{ flex: 0, flexDirection: 'row', padding: 10 }}>
-                  <Text h4 style={{ width: '50%', textAlign: 'center' }}>
-                    Temporada
+               
+
+                <View style={{ zIndex: -1, marginVertical:20 }}>
+                  <Text  style={{textAlign: 'left' ,marginHorizontal:10, fontWeight:'bold', fontSize:20}}>
+                    Estadísticas de la Temporada {Year}:
                   </Text>
-                  <DropDownPicker
-                    items={yearList.map(year => ({
-                      label: year.season_year.toString(),
-                      value: year.season_year.toString(),
-                      icon: () => <Icon name="calendar" size={25} />,
-                    }))}
-                    defaultValue={Year}
-                    containerStyle={{ height: 40, width: '40%' }}
-                    itemStyle={{
-                      justifyContent: 'flex-start',
-                    }}
-                    dropDownStyle={{ backgroundColor: '#fafafa' }}
-                    onChangeItem={item => setYear(item.value)}
-                  />
                 </View>
+                
                 <View style={{ zIndex: -1 }}>
                   <AthleteStatsTable
                     sport={athlete.sportName}
@@ -355,6 +374,14 @@ const AthleteScreen = ({ route }) => {
                       },
                     ]}
                   />
+                  </View>
+
+                  <View style={{ zIndex: -1, marginVertical:20 }}>
+                  <Text  style={{textAlign: 'left' ,marginHorizontal:10, fontWeight:'bold', fontSize:20}}>
+                    Estadísticas de Carrera:
+                  </Text>
+                </View>
+                <View>
                   <AthleteStatsTable
                     sport={athlete.sportName}
                     athleteStatistics={[
