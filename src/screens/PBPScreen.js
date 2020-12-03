@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
-  View,
-  Text,
+  ScrollView,
   SafeAreaView,
   StatusBar,
   Dimensions,
@@ -23,7 +22,7 @@ import { Colors, Elevations } from '_styles';
 
 const PBPScreen = ({ route }) => {
   const { eventId, sport, isLocal, uprmName, oppName } = route.params;
-  const { gameIsOver, currentSet } = useGameData(eventId);
+  const { gameIsOver, currentSet, opponentColor } = useGameData(eventId);
   const gameActions = useGameActions(eventId, gameIsOver);
   const teamRosters = useTeamRosters(eventId, gameIsOver);
   const partialScores = usePartialScores(eventId);
@@ -45,7 +44,7 @@ const PBPScreen = ({ route }) => {
     switch (route.key) {
       case 'teams':
         return (
-          <View style={{ flex: 1 }}>
+          <ScrollView>
             <ScoreBox
               sport={sport}
               isLocal={isLocal}
@@ -60,7 +59,7 @@ const PBPScreen = ({ route }) => {
               opponentName={oppName}
               gameActions={gameActions}
             />
-          </View>
+          </ScrollView>
         );
       case 'pbp':
         return (
@@ -71,6 +70,7 @@ const PBPScreen = ({ route }) => {
             teamRosters={teamRosters}
             uprmName={uprmName}
             opponentName={oppName}
+            opponentColor={opponentColor}
           />
         );
       case 'athletes':
@@ -103,6 +103,7 @@ const PBPScreen = ({ route }) => {
       <StatusBar barStyle={'light-content'} />
       <Scoreboard
         sport={sport}
+        isLocal={isLocal}
         uprmName={uprmName}
         opponentName={oppName}
         partialScores={partialScores}

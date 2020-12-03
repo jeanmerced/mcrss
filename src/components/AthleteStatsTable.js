@@ -85,13 +85,13 @@ const AthleteStatsTable = ({ sport, athleteStatistics }) => {
   const formatColumn = ({ item }) => {
     // value is the athlete with the stats
     // in the map key is athlete id and  and value athlete info and stats
-    const col = athleteStatistics.map(athlete => {
+    const col = athleteStatistics.map((athlete, index) => {
       const athleteInfo = athlete.athlete_info;
       const athleteStats = athlete.statistics;
 
       return (
         <View
-          key={`${athleteInfo.athlete_id}-${item.stat}`}
+          key={`${athleteInfo.athlete_id}-${item.stat}-${index}`}
           style={[styles.cell, { width: COL_WIDTH }]}
         >
           <Text style={styles.cellText}>{athleteStats[item.stat]}</Text>
@@ -131,7 +131,7 @@ const AthleteStatsTable = ({ sport, athleteStatistics }) => {
   );
   const firstColumn = (
     <View style={styles.identity}>
-      {athleteStatistics.map(athlete => {
+      {athleteStatistics.map((athlete, index) => {
         const athleteInfo = athlete.athlete_info;
         const name = [
           athleteInfo.first_name,
@@ -141,7 +141,10 @@ const AthleteStatsTable = ({ sport, athleteStatistics }) => {
           .filter(Boolean)
           .join(' ');
         return (
-          <View key={`${athleteInfo.athlete_id}`} style={styles.firstCol}>
+          <View
+            key={`${athleteInfo.athlete_id}-${index}`}
+            style={styles.firstCol}
+          >
             <Text style={styles.cellText}>
               #{athleteInfo.number}
               <Text style={{ fontWeight: 'bold' }}> {name}</Text>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
-import { depth1 } from '_styles/elevations';
 
 const Scoreboard = ({
   sport,
   isLocal,
+  gameIsOver,
   uprmName,
   opponentName,
   partialScores,
@@ -51,11 +51,11 @@ const Scoreboard = ({
           backgroundColor: 'red',
           borderRadius: 100,
           paddingHorizontal: 5,
-          marginBottom: 1,
+          marginBottom: 2,
         }}
       >
-        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 9 }}>
-          En Vivo
+        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>
+          {partial[sport][currentSet - 1]}
         </Text>
       </View>
       <ProgressBar
@@ -76,10 +76,13 @@ const Scoreboard = ({
           <Text style={styles.text}>{homeScore}</Text>
           <Text>{homeName}</Text>
         </View>
-        <View key={'partial'} style={styles.cell}>
-          <Text>{`${partial[sport]} ${currentSet}`}</Text>
-          {live}
-        </View>
+        {gameIsOver ? (
+          <Text>Final</Text>
+        ) : (
+          <View key={'partial'} style={styles.cell}>
+            {live}
+          </View>
+        )}
         <View key={'opponent-score'} style={styles.cell}>
           <Text style={styles.text}>{awayScore}</Text>
           <Text>{awayName}</Text>
@@ -113,9 +116,59 @@ const styles = StyleSheet.create({
 });
 
 const partial = {
-  Voleibol: 'Set',
-  Baloncesto: 'Cuarto',
-  Beisbol: 'Entrada',
-  Softbol: 'Entrada',
+  Voleibol: ['1er Set', '2do Set', '3er Set', '4to Set', '5to Set'],
+  Baloncesto: [
+    '1er Cuarto',
+    '2do Cuarto',
+    '3er Cuarto',
+    '4to Cuarto',
+    '1er OT',
+    '2do OT',
+    '3er OT',
+    '4to OT',
+  ],
+  Beisbol: [
+    '1ra Entrada',
+    '2da Entrada',
+    '3ra Entrada',
+    '4ta Entrada',
+    '5ta Entrada',
+    '6ta Entrada',
+    '7ma Entrada',
+    '8va Entrada',
+    '9na Entrada',
+    '10ma Entrada',
+    '11ma Entrada',
+    '12ma Entrada',
+    '13ra Entrada',
+    '14ta Entrada',
+    '15ta Entrada',
+    '16ta Entrada',
+    '17ma Entrada',
+    '18va Entrada',
+    '19na Entrada',
+  ],
+  Softbol: [
+    '1ra Entrada',
+    '2da Entrada',
+    '3ra Entrada',
+    '4ta Entrada',
+    '5ta Entrada',
+    '6ta Entrada',
+    '7ma Entrada',
+    '8va Entrada',
+    '9na Entrada',
+    '10ma Entrada',
+    '11ma Entrada',
+    '12ma Entrada',
+    '13ra Entrada',
+    '14ta Entrada',
+    '15ta Entrada',
+    '16ta Entrada',
+    '17ma Entrada',
+    '18va Entrada',
+    '19na Entrada',
+  ],
+  Futbol: ['1ra Mitad', '2da Mitad', '1er OT', '2do OT', 'Penales'],
 };
 export default Scoreboard;

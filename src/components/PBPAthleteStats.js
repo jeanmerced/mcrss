@@ -24,10 +24,10 @@ const getAthleteName = (athleteId, team) => {
   return name;
 };
 
-// sport: which sport for the stats
-// gameActions: all game actions from firebase
-// team: either uprm or opponent
-// roster: team roster from firebase
+// sport: Give sport name to know which table to render
+// gameActions: all game actions from firebase to calculate statistics
+// team: either 'uprm' or 'opponent'
+// roster: roster corresponding to the team
 const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
   const [stats, setStats] = useState({});
 
@@ -61,10 +61,10 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
       // Merge athlete info with sport stats
       teamRoster[key] = { ...value, ...athleteStats[sport] };
     });
-    // Put in a single object for easier look up
-    // All stats has 3 levels Rosters - Athletes - Stats
     for (const action of gameActions) {
+      // If action does not correspond to team than skip
       if (action.team == team) {
+        // The statistics must be valid according to the dictionary
         if (athleteStats[sport].hasOwnProperty(action.action_type)) {
           const athleteId = `athlete-${action.athlete_id}`;
           const actionType = action.action_type;
@@ -111,12 +111,15 @@ const PBPAthleteStats = ({ sport, gameActions, team, roster }) => {
     setStats({ ...teamRoster });
   }, [gameActions, roster]);
 
-  // this function renders a single stats colum for all players
-  // item is the key of the statistic for the column
+  /*
+  this function renders a single stats colum for all players
+  item is the key of the statistic for the column
+  lets say item = 'KillPoint', formatColum well git KillPoint
+  for all players and render that column
+  */
   const formatColumn = ({ item }) => {
     // value is the athlete with the stats
-    // in the map key is athlete id and  and value athlete info and stats
-
+    // in the map key is athlete id and value athlete info and stats
     const col = Object.entries(stats).map(([key, value]) => {
       let statsVal = 0;
       // For the sport of basketball when Miss stats come up we take that slot
@@ -262,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cellText: {
-    fontSize: 13,
+    fontSize: 14,
   },
 });
 
@@ -293,7 +296,7 @@ const athleteStats = {
     Points: 0,
     '2Points': 0,
     '2PointsAttempts': 0,
-    '2PointsMiss': 0, //
+    '2PointsMiss': 0,
     '3Points': 0,
     '3PointsAttempts': 0,
     '3PointsMiss': 0,
@@ -389,30 +392,6 @@ const sportStats = {
     { stat: 'StrikeOut', header: 'SO' }, // StrikeOut
     { stat: 'LeftOnBase', header: 'LOB' }, // LeftOnBase
   ],
-};
-
-const statsDescriptions = {
-  Voleibol: {
-    KillPoint: 'Puntos de Ataque',
-    AttackError: 'Errores de Ataque',
-    Assist: 'Asistencias',
-    Ace: 'Servicios Directos',
-    ServiceError: 'Errores de Servicio',
-    Dig: 'Recepciones',
-    Block: 'Bloqueos',
-    BlockPoint: 'Puntos de Bloqueo',
-    BlockingError: 'Errores de Bloqueo',
-    ReceptionError: 'Errores de Recepción',
-  },
-  Futbol: {
-    Goal: 'Goles',
-    GoalAttempt: 'Tiros a portería',
-    Assist: 'Asistencias',
-    Tackle: 'Atajadas',
-    Foul: 'Faltas',
-    YellowCard: 'Tarjetas amarillas',
-    RedCard: 'Tarjetas rojas',
-  },
 };
 
 export default PBPAthleteStats;
