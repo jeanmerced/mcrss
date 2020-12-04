@@ -21,6 +21,10 @@ import { Entypo } from '@expo/vector-icons';
 
 const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/deportes';
 
+let { width, height } = Dimensions.get('window');
+
+height = height / 3;
+
 const buildYearList = () => {
   let yearFirst = 2019;
   const currentYear = new Date(Date.now()).getFullYear();
@@ -203,9 +207,8 @@ const TeamPage = ({ sport, branch, sportId, navigation }) => {
           />
         ) : (
           <Image
-            containerStyle={{ margin: 10 }}
+            style={{width: 50, height: 50,margin:10}}
             source={{ uri: item.profile_image_link }}
-            PlaceholderContent={<ActivityIndicator />}
           />
         )}
         <TouchableOpacity
@@ -271,11 +274,10 @@ const TeamPage = ({ sport, branch, sportId, navigation }) => {
                     }}
                   />
                 ) : (
-                  <Image
-                    containerStyle={{ margin: 10 }}
-                    source={{ uri: team.team_info.team_image_url }}
-                    PlaceholderContent={<ActivityIndicator />}
-                  />
+                <Image
+                style={{width: width, height: height,marginVertical:10}}
+                source={{ uri: team.team_info.team_image_url}}
+                />  
                 )}
                 <Text
                   style={{ fontWeight: 'bold', marginVertical: 5, padding: 5 }}

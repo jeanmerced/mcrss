@@ -10,8 +10,10 @@ import {
   TouchableOpacity,
   ScrollView,
   Share,
+  Image,
+  ImageBackground,
 } from 'react-native';
-import { Image, Avatar, Text, Divider } from 'react-native-elements';
+import {Avatar, Text, Divider } from 'react-native-elements';
 import axios from 'axios';
 import { TabView, TabBar } from 'react-native-tab-view';
 import AtheleteStatsTable from '_components/AthleteStatsTable';
@@ -21,6 +23,7 @@ import { useNavigation } from '@react-navigation/native';
 import AthleteStatsTable from '_components/AthleteStatsTable';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
+import StatsLegend from '_components/StatsLegend';
 
 const buildYearList = () => {
   let yearFirst = 2019;
@@ -167,12 +170,23 @@ const AthleteScreen = ({ route, navigation }) => {
     axios
       .get(athleteSeasonUrl)
       .then(res => {
+        if (sportParam=='medalbased') {
+          {
+            setAthleteSeason([]);
+          }
+          {
+            setEventStatistics([]);
+          }
+          
+        }
+        else{
         {
           setAthleteSeason(res.data[eventStats].Athlete);
         }
         {
           setEventStatistics(res.data[eventStats].Event_Statistics);
         }
+      }
       })
       .catch(err => {
         {
@@ -265,7 +279,7 @@ const AthleteScreen = ({ route, navigation }) => {
     switch (route.key) {
       case 'AthleteInfo':
         return (
-          <View>
+          <View >
             {athlete.length == 0 ? (
               <ActivityIndicator size="large" />
             ) : (
@@ -277,7 +291,7 @@ const AthleteScreen = ({ route, navigation }) => {
                   alignItems: 'flex-start',
                 }}
               >
-                <View alignItems="center">
+                <View alignItems="center" style={{marginBottom:150}}>
                   {athlete.profilePicLink == '' ? (
                     <Avatar
                       containerStyle={{ marginTop: 5 }}
@@ -286,11 +300,12 @@ const AthleteScreen = ({ route, navigation }) => {
                       overlayContainerStyle={{ backgroundColor: 'grey' }}
                     />
                   ) : (
+                    <View>
                     <Image
-                      containerStyle={{ margin: 10 }}
-                      source={{ uri: athlete.profilePicLink }}
-                      PlaceholderContent={<ActivityIndicator />}
+                      style={{width: 150, height: 150}}
+                      source={{ uri:athlete.profilePicLink }}
                     />
+                    </View>
                   )}
                 </View>
 
@@ -357,7 +372,7 @@ const AthleteScreen = ({ route, navigation }) => {
         );
       case 'statistics':
         return (
-          <View>
+          <View >
             <View style={{ flex: 0, flexDirection: 'row', padding: 10 }}>
               <Text h4 style={{ width: '50%', textAlign: 'center' }}>
                 Temporada
@@ -382,7 +397,7 @@ const AthleteScreen = ({ route, navigation }) => {
             eventAggregateStatistics.length == 0 ||
             eventStatistics.length == 0 ||
             athlete.length == 0 ? (
-              <View>
+              <View >
                 <Text
                   style={{
                     textAlign: 'left',
@@ -410,8 +425,8 @@ const AthleteScreen = ({ route, navigation }) => {
                     No hay estadísticas de Carrera
                   </Text>
                 ) : (
-                  <View>
-                    <View style={{ zIndex: -1, marginVertical: 20 }}>
+                  <View >
+                    <View style={{ zIndex: -1, marginVertical: 20}}>
                       <Text
                         style={{
                           textAlign: 'left',
@@ -423,8 +438,9 @@ const AthleteScreen = ({ route, navigation }) => {
                         Estadísticas de Carrera:
                       </Text>
                     </View>
-                    <View>
+                    <View >
                       <AthleteStatsTable
+                        
                         sport={athlete.sportName}
                         athleteStatistics={[
                           {
@@ -438,7 +454,7 @@ const AthleteScreen = ({ route, navigation }) => {
                 )}
               </View>
             ) : (
-              <View>
+              <View >
                 <View style={{ zIndex: -1, marginVertical: 20 }}>
                   <Text
                     style={{
@@ -476,7 +492,7 @@ const AthleteScreen = ({ route, navigation }) => {
                     Estadísticas de Carrera:
                   </Text>
                 </View>
-                <View>
+                <View >
                   <AthleteStatsTable
                     sport={athlete.sportName}
                     athleteStatistics={[
@@ -489,6 +505,9 @@ const AthleteScreen = ({ route, navigation }) => {
                 </View>
               </View>
             )}
+            <View>
+            <StatsLegend sport={sportname} />
+            </View>
           </View>
         );
       default:
