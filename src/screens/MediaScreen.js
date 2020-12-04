@@ -27,28 +27,28 @@ const MediaScreen = ({ navigation }) => {
     setLoading(true);
     axios.get(`${multimediaUrl}/text`).then(res => {
       setLoading(false);
-      setTextPosts(res.data['Multimedias'].reverse());
+      setTextPosts(res.data['Multimedias']);
     });
   };
   const getImagePosts = () => {
     setLoading(true);
     axios.get(`${multimediaUrl}/image`).then(res => {
       setLoading(false);
-      setImagePosts(res.data['Multimedias'].reverse());
+      setImagePosts(res.data['Multimedias']);
     });
   };
   const getVideoPosts = () => {
     setLoading(true);
     axios.get(`${multimediaUrl}/video`).then(res => {
       setLoading(false);
-      setVideoPosts(res.data['Multimedias'].reverse());
+      setVideoPosts(res.data['Multimedias']);
     });
   };
   const getLivestreamPosts = () => {
     setLoading(true);
     axios.get(`${multimediaUrl}/livestream`).then(res => {
       setLoading(false);
-      setLivestreamPosts(res.data['Multimedias'].reverse());
+      setLivestreamPosts(res.data['Multimedias']);
     });
   };
 
