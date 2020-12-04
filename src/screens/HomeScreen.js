@@ -36,10 +36,10 @@ const HomeScreen = ({ navigation }) => {
     const loadEvents = await axios.get(eventsUrl);
     const loadVideos = await axios.get(videosUrl);
     setLoading(false);
-    setImages(loadImages.data.Multimedias.slice(-5));
-    setNews(loadNews.data.Multimedias.slice(-5));
-    setEvents(loadEvents.data.Events.slice(-4));
-    setVideos(loadVideos.data.Multimedias.slice(-2));
+    setImages(loadImages.data.Multimedias.slice(0, 5));
+    setNews(loadNews.data.Multimedias.slice(0, 5));
+    setEvents(loadEvents.data.Events.slice(0, 4));
+    setVideos(loadVideos.data.Multimedias.slice(0, 2));
     setFirstLoad(false);
   };
   useEffect(() => {

@@ -78,7 +78,14 @@ const PBPResultCard = ({
           marginBottom: 1,
         }}
       >
-        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 10 }}>
+        <Text
+          style={{
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: 10,
+            textAlign: 'center',
+          }}
+        >
           {partial[sportName][currentSet - 1]}
         </Text>
       </View>
@@ -146,7 +153,7 @@ const PBPResultCard = ({
           </View>
         </View>
         <View style={{ width: 70, alignItems: 'center', marginHorizontal: 4 }}>
-          {gameIsOver ? <Text style={{ fontSize: 16 }}>'Final'</Text> : live}
+          {gameIsOver ? <Text style={{ fontSize: 16 }}>Final</Text> : live}
         </View>
       </View>
     </View>
