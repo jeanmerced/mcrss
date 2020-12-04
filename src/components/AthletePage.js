@@ -51,10 +51,10 @@ const renderItem = ({ item }) => {
                overlayContainerStyle={{backgroundColor: 'grey'}}
              />
               ) : (     
-             <Image 
-             containerStyle={{margin:10}}
-             source={{ uri: item.profilePicLink}}
-              PlaceholderContent={<ActivityIndicator/>}/>)}
+                <Image
+                style={{width: 50, height: 50,margin:10}}
+                source={{ uri: item.profilePicLink }}
+              />)}
         <TouchableOpacity
         
         onPress={() => {
