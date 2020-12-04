@@ -58,12 +58,12 @@ const App = () => {
 
   useEffect(() => {
     const database = firebase.database();
-    const notificationRef = database.ref(
-      `notification-tokens/${Constants.deviceId}`
-    );
+    const notificationRef = database.ref('notification-tokens');
 
     registerForPushNotificationsAsync().then(token => {
-      notificationRef.set({ token });
+      const device = {};
+      device[`${Constants.deviceId}`] = token;
+      notificationRef.set(device);
       setExpoPushToken(token);
     });
 
