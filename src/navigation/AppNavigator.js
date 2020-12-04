@@ -35,7 +35,7 @@ const getHeaderTitle = route => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
   const screenTitles = {
     Home: 'Inicio',
-    Media: 'Media',
+    Media: 'Contenido',
     Results: 'Resultados',
     Sports: 'Deportes',
     About: 'Huella Deportiva',
@@ -66,7 +66,7 @@ const HomeTabs = () => (
             iconName = 'home';
             break;
           case 'Media':
-            iconName = 'tv';
+            iconName = 'newspaper';
             break;
           case 'Results':
             iconName = 'table';
@@ -90,7 +90,7 @@ const HomeTabs = () => (
     <Tab.Screen
       name="Media"
       component={MediaScreen}
-      options={{ title: 'Media' }}
+      options={{ title: 'Contenido' }}
     />
     <Tab.Screen
       name="Results"

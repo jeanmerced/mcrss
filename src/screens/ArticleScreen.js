@@ -6,7 +6,6 @@ const shareUrl = 'https://huella-deportiva-web.ue.r.appspot.com/multimedios';
 
 const ArticleScreen = ({ route, navigation }) => {
   const { title, content, postId } = route.params;
-  console.log(postId);
 
   const onShare = async (msg, id) => {
     try {

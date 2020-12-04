@@ -59,10 +59,11 @@ const HomeScreen = ({ navigation }) => {
         ) : (
           <View>
             <ImageDisplay images={images} />
-            <Headlines news={news} />
+            <Headlines news={news} navigation={navigation} />
             <EventHome
               style={(styles.shadow, { padding: 10 })}
               events={events}
+              navigation={navigation}
             />
             <Multimedios videos={videos} />
           </View>

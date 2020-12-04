@@ -207,7 +207,7 @@ const TeamPage = ({ sport, branch, sportId, navigation }) => {
           />
         ) : (
           <Image
-            style={{width: 50, height: 50,margin:10}}
+            style={{ width: 50, height: 50, margin: 10 }}
             source={{ uri: item.profile_image_link }}
           />
         )}
@@ -248,12 +248,17 @@ const TeamPage = ({ sport, branch, sportId, navigation }) => {
         return (
           <View style={styles.container}>
             {team.length == 0 ? (
-              <View>
+              <View
+                style={{
+                  marginHorizontal: 10,
+                  justifyContent: 'center',
+                  marginTop: 20,
+                }}
+              >
                 <Text
                   style={{
-                    textAlign: 'left',
-                    marginHorizontal: 10,
-                    marginVertical: 20,
+                    textAlign: 'center',
+
                     fontWeight: 'bold',
                     fontSize: 20,
                   }}
@@ -274,10 +279,10 @@ const TeamPage = ({ sport, branch, sportId, navigation }) => {
                     }}
                   />
                 ) : (
-                <Image
-                style={{width: width, height: height,marginVertical:10}}
-                source={{ uri: team.team_info.team_image_url}}
-                />  
+                  <Image
+                    style={{ width: width, height: height, marginVertical: 10 }}
+                    source={{ uri: team.team_info.team_image_url }}
+                  />
                 )}
                 <Text
                   style={{ fontWeight: 'bold', marginVertical: 5, padding: 5 }}

@@ -19,54 +19,50 @@ height = height / 2.7;
 
 width = width / 2;
 
-class EventHome extends Component {
-  state = { isLoading: false, pics: [], last: [], size: { width, height } };
-
-  render() {
-    // for (let i = 0; i < date.length; i++) {
-    //    date[i]=date[i].slice(5,16)
-    // }
-    return (
-      <View>
-        <Text
-          h4
-          style={(styles.shadow, { padding: 10, backgroundColor: 'white' })}
-        >
-          Eventos
-        </Text>
-        <ScrollView
-          horizontal={true}
-          alwaysBounceHorizontal
-          Style={styles.container}
-        >
-          {this.props.events.map(sportEvent => (
-            <Card
-              key={`event-${sportEvent.id}`}
-              containerStyle={[this.state.size, { padding: 0 }]}
-            >
+const EventHome = ({ events, navigation }) => {
+  const header = (
+    <Text h4 style={(styles.shadow, { padding: 10, backgroundColor: 'white' })}>
+      Eventos
+    </Text>
+  );
+  const onPress = () => {
+    navigation.navigate('Results');
+  };
+  return (
+    <View>
+      {header}
+      <ScrollView
+        horizontal={true}
+        alwaysBounceHorizontal
+        Style={styles.container}
+      >
+        {events.map(sportEvent => (
+          <Card
+            key={`event-${sportEvent.id}`}
+            containerStyle={[{ width, height }, { padding: 0 }]}
+          >
+            <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
               <Card.Image source={{ uri: sportEvent.sport_img_url }} />
 
-              <TouchableOpacity>
-                <Text
-                  style={{ fontWeight: 'bold', textAlign: 'left', margin: 5 }}
-                >
-                  {sportEvent.branch == 'Masculino' ? 'Tarzanes' : 'Juanas'} vs{' '}
-                  {sportEvent.opponent_name}
-                </Text>
-                <Text style={{ textAlign: 'left', margin: 5 }}>
-                  {sportEvent.sport_name} {sportEvent.branch}
-                </Text>
-                <Text style={{ textAlign: 'left', margin: 5 }}>
-                  {moment(sportEvent.event_date).utc(true).format('ll')}
-                </Text>
-              </TouchableOpacity>
-            </Card>
-          ))}
-        </ScrollView>
-      </View>
-    );
-  }
-}
+              <Text
+                style={{ fontWeight: 'bold', textAlign: 'left', margin: 5 }}
+              >
+                {sportEvent.branch == 'Masculino' ? 'Tarzanes' : 'Juanas'} vs{' '}
+                {sportEvent.opponent_name}
+              </Text>
+              <Text style={{ textAlign: 'left', margin: 5 }}>
+                {sportEvent.sport_name} {sportEvent.branch}
+              </Text>
+              <Text style={{ textAlign: 'left', margin: 5 }}>
+                {moment(sportEvent.event_date).utc(true).format('ll')}
+              </Text>
+            </TouchableOpacity>
+          </Card>
+        ))}
+      </ScrollView>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   text: {
