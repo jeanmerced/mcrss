@@ -63,7 +63,7 @@ const App = () => {
     registerForPushNotificationsAsync().then(token => {
       const device = {};
       device[`${Constants.deviceId}`] = token;
-      notificationRef.set(device);
+      notificationRef.update(device);
       setExpoPushToken(token);
     });
 
