@@ -3,7 +3,7 @@ import { firebase } from '_firebase';
 
 const gameMetadata = {
   currentSet: 1,
-  gameIsOver: '',
+  gameIsOver: true,
   opponentColor: '',
   sport: '',
 };
